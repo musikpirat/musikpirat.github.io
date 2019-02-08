@@ -756,7 +756,7 @@ function deleteSong(song, callback)
 	debug("Deleting song ", song);
 	var songUrl = song.downloadLink;
 	caches.open("ccmixter2go")
-		.then(cache -> cache.delete(songUrl))
+		.then(cache => cache.delete(songUrl))
 		.then(callback());
 	//xxx
 	return;
