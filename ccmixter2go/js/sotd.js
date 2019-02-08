@@ -1,3 +1,4 @@
+const baseUrl = "https://ccmixter,christian-hufgard.de/";
 var current;
 var currentSong;
 var position = null;
@@ -56,10 +57,10 @@ function onDeviceReady()
 				}
       break;
       }
+		}
   });
 
 	setup();
-}
 
 document.addEventListener("deviceready", onDeviceReady, false);
 
@@ -371,6 +372,10 @@ function getStoredFiles(callback) {
 	var entries = [];
 	callback(entries);
 	return;
+	/*
+	cacheName = "ccmixter2go";
+	caches.open(cacheName).then(function(cache) {
+	*/
 	var dummy = {};
 	dummy.file_name = "";
 	resolveLocalFileSystemURL(getStorageUrl(dummy),
@@ -1612,7 +1617,7 @@ function setupOtherStuff() {
 }
 
 function updatePlaylist(song, callback) {
-	var url = "http://ccmixter.org/api/playlist/";
+	var url = baseUrl+"api/playlist/";
 	url += (song.isFavourite ? "add" : "remove");
 	url += "/" + song.id + "/" + playlistId;
 	console.log("Calling "+url);
@@ -2128,7 +2133,7 @@ function closeOptionsDialog() {
 
 function loginAtCcmixter(callback)
 {
-	$.ajax({ url: "http://ccmixter.org/login", cache: false, timeout: 30000, method: "POST",
+	$.ajax({ url: baseUrl+"login", cache: false, timeout: 30000, method: "POST",
 		data: {user_name: user, user_password: password,
 		form_submit: "Log In", http_referer: "http%3A%2F%2Fccmixter.org%2Flogout",
 		userlogin: "classname"}})
@@ -2148,7 +2153,7 @@ function loginAtCcmixter(callback)
 
 function checkIfPlaylistExists(callback) {
 	console.log("Loading user's playlists from ccmixter...");
-		$.ajax({ url: "http://ccmixter.org/api/queries?items=dataview%3Dplaylists%26limit%3D10%26user%3D"+user,
+		$.ajax({ url: baseUrl+"api/queries?items=dataview%3Dplaylists%26limit%3D10%26user%3D"+user,
 			cache: false, timeout: 30000, dataType: 'json'})
 			.done(function(data) {
 				var playListFound = false;
@@ -2181,7 +2186,7 @@ function loadFavData(loadedFavourites, idx) {
 	} else {
 		getSongById(loadedFavourites[idx], "favourites", function(song) {
 			if (song == null) {
-				var url = "http://ccmixter.org/api/query?f=json&ids="+loadedFavourites[idx];
+				var url = baseUrl+"api/query?f=json&ids="+loadedFavourites[idx];
 				console.log("Loading fav data from "+url);
 				$.ajax({ url: url,
 					cache: false, timeout: 30000, dataType: 'json'}).
@@ -2222,7 +2227,7 @@ function loadFavData(loadedFavourites, idx) {
 function loadPlaylist(_playlistId, callback) {
 	playlistId = _playlistId;
 	console.log("Loading playlist with id "+playlistId+" from ccmixter...");
-	$.ajax({ url: "http://ccmixter.org/api/query?f=jsex&playlist="+playlistId,
+	$.ajax({ url: baseUrl+"api/query?f=jsex&playlist="+playlistId,
 		cache: false, timeout: 30000, dataType: 'json'})
 		.done(function(data) {
 			console.log("Got playlist with id "+playlistId+" from ccmixter.");
@@ -2244,7 +2249,7 @@ function loadPlaylist(_playlistId, callback) {
 
 function createPlaylist(callback) {
 	console.log("creating new playlist");
-	$.ajax({ url: "http://ccmixter.org/api/playlist/new?cart_name=ccMixter2go", cache: false, timeout: 30000})
+	$.ajax({ url: baseUrl+"api/playlist/new?cart_name=ccMixter2go", cache: false, timeout: 30000})
 		.done(function(data) {
 			checkIfPlaylistExists(function() {
 				console.log("Playlist successfully created. Id is: "+playlistId);
@@ -2304,9 +2309,9 @@ function getSongList(offset, success, error)
 	getCount(playMode == "edPicks" ? "edPicks" : "songs", function(count) {
 		var url;
 		if (playMode == "edPicks") {
-			url = "http://ccmixter.org/api/query?f=json&limit="+limit+"&tags=remix,editorial_pick&offset="+offset;
+			url = baseUrl+"api/query?f=json&limit="+limit+"&tags=remix,editorial_pick&offset="+offset;
 		} else {
-			url = "http://ccmixter.org/api/query?f=json&limit="+limit+"&tags=remix&offset="+offset;
+			url = baseUrl+"api/query?f=json&limit="+limit+"&tags=remix&offset="+offset;
 		}
 		console.log("Calling "+url);
 
