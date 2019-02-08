@@ -755,6 +755,7 @@ function deleteSong(song, callback)
 {
 	debug("Deleting song ", song);
 	var songUrl = song.downloadLink;
+	songUrl = "https://ccmixter.christian-hufgard.de/"+songUrl.substr(songUrl.indexOf("/content")+1);
 	console.log("url is: "+songUrl);
 	caches.open("ccmixter2go")
 		.then(cache => cache.delete(songUrl))
