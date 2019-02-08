@@ -34,10 +34,9 @@ self.addEventListener('fetch', function(e) {
   console.log('[ServiceWorker] Fetch', e.request.url);
   var dataUrl = '/api/query';
   if (e.request.url.indexOf(dataUrl) > -1) {
-   console.log("Fetching calendar data");
-    e.respondWith(
-        fetch(e.request)
-    );
+   console.log("Fetching api data");
+   const request = new Request(e.request, { mode: 'no-cors' });
+   e.respondWith(fetch(request));
   } else if (e.request.url.indexOf(".mp3") > -1) {
       console.log("Got a mp3 call ", e);
       e.respondWith(
