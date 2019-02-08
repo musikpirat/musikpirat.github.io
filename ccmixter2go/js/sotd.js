@@ -1,4 +1,4 @@
-const baseUrl = "https://ccmixter,christian-hufgard.de/";
+const baseUrl = "https://ccmixter.christian-hufgard.de/";
 var current;
 var currentSong;
 var position = null;
