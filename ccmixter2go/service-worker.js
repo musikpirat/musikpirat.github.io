@@ -1,6 +1,6 @@
 var cacheName = 'ccmixter2go';
 
-var filesToCache = ["index.html", "js/sotd.js", "manifest.json"];
+var filesToCache = ["/", "/index.html", "/js/sotd.js", "/manifest.json"];
 
 self.addEventListener('install', function(e) {
   console.log('[ServiceWorker] Install');
@@ -32,7 +32,7 @@ self.addEventListener('activate', function(e) {
 
 self.addEventListener('fetch', function(e) {
   console.log('[ServiceWorker] Fetch', e.request.url);
-  var dataUrl = '/creative_christmas_2017_data';
+  var dataUrl = '/api/query';
   if (e.request.url.indexOf(dataUrl) > -1) {
    console.log("Fetching calendar data");
     e.respondWith(
@@ -101,6 +101,7 @@ self.addEventListener('fetch', function(e) {
                   */
                 })
                 .then(function(response) {
+                  progress(100, 100);
                   console.log("[ServiceWorker] Putting response to cache:", response)
                   cache.put(e.request.url, response.clone());
                   return response;
