@@ -35,8 +35,7 @@ self.addEventListener('fetch', function(e) {
   var dataUrl = '/api/query';
   if (e.request.url.indexOf(dataUrl) > -1) {
    console.log("Fetching api data");
-   const request = new Request(e.request, { mode: 'no-cors' });
-   e.respondWith(fetch(request));
+   e.respondWith(fetch(e.request));
   } else if (e.request.url.indexOf(".mp3") > -1) {
       console.log("Got a mp3 call ", e);
       e.respondWith(
