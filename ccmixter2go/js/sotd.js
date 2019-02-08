@@ -61,6 +61,7 @@ function onDeviceReady()
   });
 
 	setup();
+}
 
 document.addEventListener("deviceready", onDeviceReady, false);
 
