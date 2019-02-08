@@ -487,6 +487,7 @@ function startDownload(song, abortDownload, finished)
 function startPlaying(song) {
 	if (playWhenReady) {
 		var songUrl = song.downloadLink;
+		songUrl = "https://ccmixter.christian-hufgard.de/"+songUrl.substr(songUrl.indexOf("/content"));
 		console.log("Setting audio.src to "+songUrl);
 		audio.src = songUrl;
 		playMedia();
