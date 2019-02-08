@@ -754,9 +754,10 @@ function pauseCurrent(callback) {
 function deleteSong(song, callback)
 {
 	debug("Deleting song ", song);
-	var downloadPath = getStorageUrl(song);
-	console.log("Deleting file "+downloadPath);
-	callback();
+	var songUrl = song.downloadLink;
+	caches.open("ccmixter2go")
+		.then(cache -> cache.delete(songUrl))
+		.then(callback());
 	//xxx
 	return;
 	resolveLocalFileSystemURL(downloadPath, function(entry) {
