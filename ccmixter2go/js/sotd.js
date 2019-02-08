@@ -1,0 +1,1 @@
+/home/largor/Nextcloud/easy2/js/sotd.js
