@@ -41,7 +41,7 @@ self.addEventListener('fetch', function(e) {
       console.log("Got a mp3 call ", e);
       e.respondWith(
         caches.open(cacheName).then(function(cache) {
-          return cache.match(e.request).then(function(response) {
+          return cache.match(e.request.url).then(function(response) {
             if (response) {
               console.log('[ServiceWorker] Found cached mp3 response: ', response);
               progress(100, 100);
@@ -113,10 +113,10 @@ self.addEventListener('fetch', function(e) {
         })
     );
   } else {
-    console.log("Matching generic request "+e.request+": ", caches.match(e.request));
+    console.log("Matching generic request "+e.request.urk+": ", caches.match(e.request.url));
     e.respondWith(
       caches.open(cacheName).then(function(cache) {
-        return cache.match(e.request).then(function(response) {
+        return cache.match(e.request.url).then(function(response) {
             if (response) {
               console.log('[ServiceWorker] Found cached response: ', response);
               return response;
