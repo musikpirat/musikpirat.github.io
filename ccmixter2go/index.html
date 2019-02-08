@@ -1,1 +1,302 @@
-/home/largor/Nextcloud/easy2/index.html
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="de" lang="de" dir="ltr">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>ccMixter2go</title>
+
+  <link rel="stylesheet" href="css/jquery.mobile-1.4.5.min.css"/>
+  <link rel="stylesheet" href="css/jquery.mobile.theme-1.4.5.min.css"/>
+
+  <link rel="stylesheet" href="css/sotd.css"/>
+
+  <script type="text/javascript" src="js/jquery-2.1.4.min.js"></script>
+
+  <script type="text/javascript" src="js/jquery-ui-1.12.0.min.js"></script>
+
+  <script type="text/javascript" src="js/jquery.mobile-1.4.5.min.js"></script>
+
+  <script type="text/javascript" src="js/sotd.js"></script>
+
+  <link rel="stylesheet" href="owl-carousel/owl.carousel.css">
+
+  <!-- Default Theme -->
+  <link rel="stylesheet" href="owl-carousel/owl.theme.css">
+
+  <!-- Include js plugin -->
+  <script src="owl-carousel/owl.carousel.js"></script>
+
+  <!--
+  <link rel="stylesheet" href="css/jquery.mobile-1.2.0.css,sotd.css"/>
+  <script type="text/javascript" src="js/jquery-1.8.3.min.js,jquery-ui-1.9.2.custom.min.js,jquery.mobile-1.2.0.min.js,sotd.js,mobiscroll-2.3.1.custom.min.js"></script>
+-->
+</head>
+<body onload="setup()">
+
+  <div id="outer_wrapper" style="display:block" data-role="page">
+    <div data-role="header" style="text-align: center">
+      <div style="display: flex; justify-content: space-between; margin-left: 20px; margin-right:17px;">
+        <a href="#" data-rel="popup" data-role="none" class="box" id="edPicks">EdPicks</a>
+        <a href="#" data-rel="popup" data-role="none" class="box" id="favourites">Favourites</a>
+        <a href="#" data-rel="popup" data-role="none" class="box" id="songs">All Songs</a>
+      </div>
+      <a href="#options_dialog" data-rel="popup" data-icon="gear" class="ui-btn-right" id="options_button"></a>
+    </div>
+
+    <div data-role="popup" data-shadow="true" data-overlay-theme="a" id="credentials_dialog">
+      <a href="#" data-rel="back" data-role="button" data-theme="a" data-icon="delete" data-iconpos="notext" class="ui-btn-right">Close</a>
+      <div data-role="header">
+        <h1>ccMixter credentials</h1>
+      </div>
+      <!--
+      <div data-role="content">
+        <form>
+          <label for="user">Username:</label>
+          <input data-clear-btn="true" name="user" id="user" value="" autocomplete="off" type="text"/>
+          <label for="password">Password:</label>
+          <input data-clear-btn="true" name="password" id="password" value="" autocomplete="off" type="password"/>
+          <input value="Login" type="submit"/>
+        </form>
+      </div>
+    -->
+    </div>
+
+    <div data-role="popup" data-shadow="true" data-overlay-theme="a" id="generic_dialog">
+      <a href="#" data-rel="back" data-role="button" data-theme="a" data-icon="delete" data-iconpos="notext" class="ui-btn-right">Schließen</a>
+      <div data-role="header">
+        <h1 id="generic_header"></h1>
+      </div>
+      <div data-role="content" id="generic_content">
+      </div>
+    </div>
+
+    <div data-role="popup" data-shadow="true" data-overlay-theme="a" id="initial_dialog">
+      <a href="#" data-rel="back" data-role="button" data-theme="a" data-icon="delete" data-iconpos="notext" class="ui-btn-right">Schließen</a>
+      <div data-role="header">
+        <h1>Welcome!</h1>
+      </div>
+      <div data-role="content">
+        Seems this is the first time you start ccMixter.go.<br/>
+        Click <a href="#help_div" data-rel="dialog" data-transition="pop">here</a> to read how to use this app.
+      </div>
+    </div>
+
+    <div id="discard_dialog" data-role="popup" >
+      <div data-role="header">
+        <h1>Discard Song?</h1>
+      </div>
+      <div role="main" class="ui-content">
+        <h3 class="ui-title">Song will be discarded without beeing heard...</h3>
+        <a href="#" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b" data-rel="back">Cancel</a>
+        <a href="#" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b" data-rel="back" id="discardButton">Discard</a>
+      </div>
+    </div>
+
+    <div id="options_dialog" data-role="popup">
+      <a href="#" data-rel="back" data-role="button" data-icon="delete" data-iconpos="notext" class="ui-btn-right">Schließen</a>
+      <ul data-role="listview" data-inset="true">
+        <li data-role="divider">Optionen</li>
+        <li><a href="#help_div" data-rel="dialog" data-transition="pop" id="help_button">Show help</a></li>
+        <li><a href="#credits_dialog" data-rel="dialog" data-transition="pop" id="credits_button">Show credits</a></li>
+        <!--
+        <li id="logindata"><a href="#">ccMixter credentials</a></li>
+        <li>
+          <div class="ui-field-contain">
+            <label for="auto-download-switch">Auto-Download new songs</label>
+            <select name="auto-download-switch" id="auto-download-switch" data-role="slider" data-mini="true">
+              <option value="false">Off</option>
+              <option value="true">On</option>
+            </select>
+          </div>
+        </li>
+        <li>
+          <div class="ui-field-contain">
+            <label for="auto-download-wlan-switch">Auto download via WLAN only</label>
+            <select name="auto-download-wlan-switch" id="auto-download-wlan-switch" data-role="slider" data-mini="true">
+              <option value="false">Off</option>
+              <option value="true">On</option>
+            </select>
+          </div>
+        </li>
+        <li>
+          <div class="ui-field-contain">
+            <label for="storage_size">Cache size</label>
+            <input name="storage_size" id="storage_size" data-highlight="true" min="0" max="300" value="50" type="range">
+            <span class="labelPlus">+</span>
+          </div>
+        </li>
+      -->
+      </ul>
+    </div>
+
+    <div id="wrapper1" class="wrapper" style="display:block">
+    <div data-role="content">
+      <div class="credits">
+        <span class="title"></span><span class="by"> von </span><span class="author"></span>
+      </div>
+      <div class="controls">
+        <div class="rewind"></div>
+        <div class="player play">
+        </div>
+        <div class="forward"></div>
+      </div>
+      <div class="status">
+        <div class="loading_status"></div>
+        <div class="play_status"></div>
+      </div>
+      <!--
+      <div class="status cache">
+        <div class="cache_status"></div>
+      </div>
+    -->
+      <div class="license_div"><a rel="license" class="license"></a></div>
+      <div class="favourite"></div>
+      <div class="share"></div>
+      <div class="ccmixter_ref_div"><a class="ccmixter_ref">Visit song @ <br/><img src="http://ccmixter.org/mixter-files/images/cc-mixter-logo.png" alt="ccMixter-Logo"/></a></div>
+    </div>
+  </div>
+</div>
+
+  <div id="help_div" data-role="page">
+    <div data-role="content" class="owl-carousel">
+      <div class="item">
+        <h1>Welcome!</h1>
+        <p>
+          Thanks that you chose to install ccMixter2go. All music you are listening here
+          is provided by the generous artists from ccMixter.org.
+        </p>
+        <p>
+          ccMixter is a totally free remixing community fully based on the mighty creative
+          commons license model. This means, that everybody is allowed to create remixes
+          of the songs uploaded there. Most artists upload so called stems there.
+        </p>
+        <p>
+          Stems  are single tracks of a song that are intended to be used for remixes. A
+          stem can be a bass line, drums, guitars, vocals, ... basically everything.
+        </p>
+      </div>
+      <div class="item">
+        <h1>Easy access</h1>
+        <p>
+          This app shall provide you an easy access to the rich world of music from
+          ccMixter. This comes of course with some restrictions and differences compared to the full
+          website <a href="http://www.ccmixter.org">ccmixter.org</a>.
+        </p>
+        <p>
+          I listen to music from ccMixter nearly all the time. Every song I want to listen
+          to again gets a "thumb up". Some I add to playlists, but that happens only for
+          very special songs. So most of the time I have to search for the songs I marked
+          with thumbs.
+        </p>
+        <p>
+          From time to time I do not visit ccMixter. This happens usually when I am on
+          vacation. When I come back a lot of songs are waiting for me. And which song is
+          the last song I have heard? ccMixer does not tell me this at the moment.
+          And to be honest, there is a lot of music at ccMixter I listen once and then never
+          again. If I even finish listening at all. :) And what about when I am on the
+          road with no broadband internet connection avaiable? ccMixter2go to the rescue!
+        </p>
+      </div>
+      <div class="item">
+        <h1>Functionalities</h1>
+        <p>
+          This app has three main features:
+          <ol>
+            <li>Provide an eay access to the songs you like</li>
+            <li>Help to distinguish between unheard and heard songs</li>
+            <li>Store songs for offline access</li>
+          </ol>
+          Some advanced feature are available too:
+          <ul>
+            <li>Play all favourites shuffled</li>
+            <li>Store fav'ed songs in a ccMixter-Playlist</li>
+            <li>Show only songs that have been selected by editors (so called Ed' Picks).</li>
+          </ul>
+        </p>
+      </div>
+      <div class="item">
+        <h1>Ed' Picks</h1>
+        <p>
+          When you start ccMixter2go the first time, it will load the 25 latest songs that
+          have been "ed picked". This is intended to prevent you from having a "difficult"
+          experience. As with every other music portal there will be songs you like and
+          songs you do not like. Songs that are easy to listen to and songs that are for
+          those who love them.
+        </p>
+        <p>If you want to live the full ccMixter experience, you can deactive the
+          Ed'Pick only mode. But for a good start, you should listen to some ed picks first.
+          By the way: I am allowed to do Ed'Picks do. I focus on electronic stuff.
+        </p>
+      </div>
+      <div class="item">
+        <h1>Usage</h1>
+        <p>
+          So you are still reading. That's good. :) Using ccMixter2go is pretty easy.
+          <ol>
+            <li>Press the "Play" button</li>
+            <li>Listen to the song</li>
+            <li>If you like it, press the star</li>
+            <li>If you do like it, just swipe it away. You will never see that song again (*).</li>
+            <li>If you are sure that you even do not want to listen to a song, tap the screen
+              longer and a dialog will display where you can discard it.</li>
+            <li>If you swipe from left to right, an older song will appear</li>
+            <li>Swiping from right to left gives to a newer song. If you reached the
+              newest known song, ccMixter2go will check for new songs.</li>
+            </li>
+          </ol>
+          (*) You can select to view all songs in the options. This is helpful if you
+          discarded a song by mistake.
+        </p>
+      </div>
+      <div class="item">
+        <h1>ccMixter credetials</h1>
+        <p>
+          You do not need to have an account at ccmixter in order to use ccMixter2go.
+          All your favourites are stored on your mobile. But if you create an account
+          there, your favourites will be stored in a playlist at ccMixter. Right now
+          this only works with account that are created with username and password.
+        </p>
+        <p>
+          Besides the ability to enjoy your playlist directly at ccMixter, ccMixter
+          knows which songs you like and can use this knowledge to create playlists
+          with the songs used in many playlists. A nice feature that can help new users
+          to find the best songs. So maybe you want to give it a chance.
+        </p>
+        <p>
+          If you decide to sync your favourites, the mobile will stay the master if
+          it comes to the decision if a song shall be removed. But you can add songs
+          at ccMixter.org to your playlist and they will be added to your local
+          favourites list.
+        </p>
+      </div>
+      <!--
+      <div class="item">
+        <h1>Cache size</h1>
+        <p>
+          From the second start on, ccMixter2go will start to download all songs - up to
+          the given cache size that defaults to 100 MB. You can increase or decrease it
+          according your needs.
+        </p>
+        <h1>Auto download</h1>
+          ccMixter2go caches songs so you can listen to them without having to
+          wait for the download to finish. Of course you can turn off auto download
+          or allow auto download even via mobile connections.
+      </div>
+    -->
+    </div>
+    <a href="#outer_wrapper" data-rel="back" class="ui-btn ui-shadow ui-corner-all ui-icon-back ui-btn-icon-left">Leave help</a>
+  </div>
+
+  <div data-role="page" id="credits_dialog">
+    <div data-role="content">
+      <h1>Credits</h1>
+      <p>Icons are based on the set "<a href="http://www.flaticon.com/packs/dirty-music">dirty music</a>" by
+        <a href="http://www.flaticon.com/authors/dirtyworks">Dirtworks</a>. They are licensed under
+        <a href="http://creativecommons.org/licenses/by/3.0/">CC-BY 3.0</a>.</p>
+    </div>
+    <a href="#outer_wrapper" data-rel="back" class="ui-btn ui-shadow ui-corner-all ui-icon-back ui-btn-icon-left">Leave credits</a>
+  </div>
+</body>
+</html>

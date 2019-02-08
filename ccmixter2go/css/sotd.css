@@ -1,1 +1,327 @@
-/home/largor/Nextcloud/easy2/css/sotd.css
+@media only screen and (max-width: 450px) {
+    .rewind {
+        position: relative;
+        top: 128px;
+    }
+
+    .player {
+        margin-left: -64px;
+    }
+
+    .forward {
+        left: 138px;
+        position: absolute;
+        top: 128px;
+    }
+
+    .controls {
+        height: 256px;
+        width: 266px;
+        position:relative;
+    }
+
+    #wrapper1, #wrapper2, #wrapper3 {
+	 min-height: 730px;
+    }
+}
+
+@media only screen and (min-width: 451px) {
+    .controls {
+        height: 128px;
+        width: 408px;
+    }
+
+    .player {
+		margin: auto;
+    }
+
+    #wrapper1, #wrapper2, #wrapper3 {
+	 min-height: 600px;
+    }
+}
+
+.labelPlus{
+    display: none;
+    position: absolute;
+    right: 0px;
+    font-size: 14px;
+    font-weight: bold;
+    text-align: right;
+    width: 12px;
+    line-height: 30px;
+    margin-right: 18px;
+    margin-top: 0px;
+}
+
+.ui-header {
+  height: 25px !important;
+  background-color: #f9f9f9 !important;
+  border: 0px;
+}
+
+.box {
+  text-decoration: none;
+  border: 1px solid;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  padding-top: 2px;
+  padding-bottom: 2px;
+  color: black !important;
+  border-radius: 1em;
+}
+
+.box.active {
+  text-shadow: 0 0 0.2em #8F7, 0 0 0.2em #8F7;
+}
+
+#actions_button, #options_button {
+    background: rgba(0, 0, 0, 0) none repeat scroll 0 0 !important;
+    border: 0 none;
+    padding-left: 14px;
+    box-shadow: none;
+}
+
+.play, .pause, .stop, .rewind, .forward, .favourite {
+  width: 128px;
+	height: 128px;
+}
+
+.play:active, .pause:active, .stop:active, .rewind:active, .forward:active, .favourite:active, .favourite.active {
+}
+
+
+.ui-page
+{
+  background-color: white !important;
+}
+
+.play, .pause, .rewind {
+    padding-right: 10px;
+}
+
+.play {
+  background: url(../images/play.svg) no-repeat, radial-gradient(64px at 50% 50% , #edeae8, #ffffff);
+}
+
+.play:active {
+  background: url(../images/play.svg) no-repeat, radial-gradient(64px at 50% 50% , #cbf7f1, #ffffff);
+}
+
+.stop {
+  background: url(../images/stop.svg) no-repeat, radial-gradient(64px at 50% 50% , #edeae8, #ffffff);
+}
+
+.stop:active {
+  background: url(../images/stop.svg) no-repeat, radial-gradient(64px at 50% 50% , #cbf7f1, #ffffff);
+}
+
+.rewind {
+  background: url(../images/rewind.svg) no-repeat, radial-gradient(64px at 50% 50% , #edeae8, #ffffff);
+}
+
+.forward {
+  background: url(../images/forward.svg) no-repeat, radial-gradient(64px at 50% 50% , #edeae8, #ffffff);
+}
+.forward:active {
+  background: url(../images/forward.svg) no-repeat, radial-gradient(64px at 50% 50% , #cbf7f1, #ffffff);
+}
+
+.rewind:active {
+  background: url(../images/rewind.svg) no-repeat, radial-gradient(64px at 50% 50% , #cbf7f1, #ffffff);
+}
+
+.pause {
+  background: url(../images/pause.svg) no-repeat, radial-gradient(64px at 50% 50% , #edeae8, #ffffff);
+}
+
+.pause:active {
+  background: url(../images/pause.svg) no-repeat, radial-gradient(64px at 50% 50% , #cbf7f1, #ffffff);
+}
+
+.favourite {
+  background: url(../images/star.svg) no-repeat, radial-gradient(64px at 50% 50% , #edeae8, #ffffff);
+}
+
+.favourite:active, .favourite.active {
+  background: url(../images/star.svg) no-repeat, radial-gradient(40px at 50% 72px , #F8FF26, #ffffff);
+}
+
+.share{
+  background: url(../images/share.svg) no-repeat;
+}
+
+.controls, .status {
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 1em;
+}
+
+.status {
+    border: 4px solid;
+    height: 24px;
+    margin-top: 5px;
+    max-width: 90%;
+    clear: left;
+    position: relative;
+}
+
+.status.loading:before {
+    content: "Downloading...";
+    vertical-align: middle;
+    font-weight: bold;
+}
+
+.status.buffering:before {
+    content: "Buffering...";
+    vertical-align: middle;
+    font-weight: bold;
+}
+
+.status.cache {
+	//height: 12px;
+}
+
+.status.cache:before {
+    content: "Cache";
+    vertical-align: middle;
+    font-weight: bold;
+}
+.cache_status {
+    background-color: lightgreen;
+    height: 100%;
+    width: 0%;
+    position: absolute;
+    top: 0px;
+}
+
+.loading_status {
+    background-color: black;
+    height: 100%;
+    width: 0%;
+    position: absolute;
+    top: 0px;
+}
+
+.play_status {
+    background-color: green;
+    height: 100%;
+    width: 0%;
+    position: absolute;
+    top: 0px;
+    border-radius: 1em;
+}
+
+.controls div {
+    float: left;
+}
+
+.wrapper {
+	text-align: center;
+}
+
+.ui-content {
+	margin: 5px !important;
+	padding: 0px !important;
+}
+
+.license_div, .share, .favourite, .links {
+	margin-top: 5px;
+}
+#share_dialog .ui-slider-switch {
+	width: 7.5em;
+	float: left;
+}
+.social_switches {
+	width: 300px;
+	margin: auto;
+}
+#twitter iframe, #gplus iframe, #facebook iframe {
+    margin-top: 7px !important;
+}
+
+	.ui-content .main {
+		margin-top: -15px;
+	}
+
+	.ui-content .main div {
+		margin-top: 10px;
+	}
+
+	.ui-content .main {
+		padding: 0px !important;
+	}
+
+	.share, .favourite {
+		margin-left: auto;
+		margin-right: auto;
+	}
+	.player {
+		height: 128px;
+		width: 128px;
+		position: relative;
+	}
+
+	.links {
+		text-align: center;
+		line-height: 2em;
+		width: 170px;
+		margin-left: auto;
+		margin-right: auto;
+		margin-top: 20px !important;
+
+	}
+	.links a {
+		display: block;
+	}
+	.credits {
+		display: inline;
+	}
+	.author, .title {
+		font-size: 1.2em;
+		font-weight: bold;
+	}
+	.license_div {
+		width: 88px;
+		height: 31px;
+		margin-left: auto;
+		margin-right: auto;
+	}
+	.license {
+		width: 88px;
+		height: 31px;
+		background: url('../images/cc-sprite.png');
+		display: block;
+		margin: auto;
+		display: block;
+		margin: auto auto 5px auto;
+	}
+	.by-3, .by {
+		background-position: 0px 0px;
+	}
+	.by-sa-3, .by-sa {
+		background-position: 0px -31px;
+	}
+	.by-nc-3, .by-nc {
+		background-position: 0px -62px;
+	}
+	.sampling_plus {
+		background-position: 0px -93px;
+	}
+	.nc-sampling_plus {
+		background-position: 0px -124px;
+	}
+
+	.loader {
+		z-index: 50;
+	}
+
+/*	.status {
+		z-index: 100;
+		position: absolute;
+		left: 0px;
+		top: 0px;
+	}
+	*/

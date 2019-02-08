@@ -1,1 +1,22 @@
-/home/largor/Nextcloud/easy2/manifest.json
+{
+  "name": "ccMixter2Go",
+  "short_name": "ccMixter2Go",
+  "lang": "de",
+  "start_url": "index.html",
+  "display": "standalone",
+  "orientation": "landscape",
+  "theme_color": "#000000",
+  "background_color": "#ffffff",
+  "icons": [
+    {
+      "src": "images/android-icon-192x192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "images/icon.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ]
+}

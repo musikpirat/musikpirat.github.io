@@ -86,9 +86,10 @@ function online() {
 		return false;
 	}
 
-	var networkState = navigator.connection.effectiveType;
-  console.log("networkState: ["+networkState+"]");
-	if ((networkState == "undefined"))
+	var networkState = navigator.connection.type;
+
+	if ((networkState == Connection.NONE) ||
+		  (networkState == Connection.UNKNOWN))
 	{
 		console.log("offline: "+networkState);
 		return false;
@@ -114,12 +115,10 @@ function autoDownloadEnabled() {
 		return;
 	}
 
-	var networkState = navigator.connection.effectiveType;
+	var networkState = navigator.connection.type;
 
-  console.log("networkState: ["+networkState+"]");
-
-	if ((networkState == "ETHERNET") ||
-		  (networkState == "WIFI"))
+	if ((networkState == Connection.ETHERNET) ||
+		  (networkState == Connection.WIFI))
 	{
 		console.log("auto_download_wlan_only and network is "+networkState);
 		return true;
@@ -289,8 +288,6 @@ function downloadSong(song)
 }
 
 function isSongReadyToPlay(song, isReadyCallback, isNotReadyCallback) {
-	isReadyCallback(song);
-	return;
 	var downloadPath = getStorageUrl(song);
 	console.log("isSongReadyToPlay checking "+song.title+" path is: "+downloadPath);
 	resolveLocalFileSystemURL(downloadPath,
@@ -368,9 +365,6 @@ function sumFiles(entries, index, sum, callback) {
 }
 
 function getStoredFiles(callback) {
-	var entries = [];
-	callback(entries);
-	return;
 	var dummy = {};
 	dummy.file_name = "";
 	resolveLocalFileSystemURL(getStorageUrl(dummy),
@@ -481,11 +475,6 @@ function startDownload(song, abortDownload, finished)
 
 function startPlaying(song) {
 	if (playWhenReady) {
-		var songUrl = song.downloadLink;
-		console.log("Setting audio.src to "+songUrl);
-		audio.src = songUrl;
-		playMedia();
-		return;
 		var downloadPath = getStorageUrl(song);
 		resolveLocalFileSystemURL(downloadPath,
 			function(file) {
@@ -750,9 +739,6 @@ function deleteSong(song, callback)
 	debug("Deleting song ", song);
 	var downloadPath = getStorageUrl(song);
 	console.log("Deleting file "+downloadPath);
-	callback();
-	//xxx
-	return;
 	resolveLocalFileSystemURL(downloadPath, function(entry) {
 		entry.file(function(file) {
 			var fileSize = file.size;
@@ -860,26 +846,17 @@ $(document).ready(function() {
 });
 
 function setup() {
-  if ('serviceWorker' in navigator) {
-	   navigator.serviceWorker
-	            .register('./service-worker.js')
-	            .then(function() {
-	               console.log('Service Worker Registered');
-			});
-			navigator.serviceWorker.ready.then(registration => {
-				console.log("ServiceWorker is ready");
-				$("#"+playMode).addClass("active");
-
-				setupDB(function() {
-					readFileCache(function() {
-						setupOtherStuff();
-					});
-				});
-			});
-	}
 	$.mobile.loading('show');
 	storage_size = getIntFromLocalStorage("storage_size", 100);
 	playMode = getStringFromLocalStorage("playMode", "edPicks");
+
+	$("#"+playMode).addClass("active");
+
+	setupDB(function() {
+		readFileCache(function() {
+			setupOtherStuff();
+		});
+	});
 }
 
 function getDistanceForSong(song, wantedSong, success)
@@ -1591,7 +1568,7 @@ function setupOtherStuff() {
 		if (currentSong.isFavourite) {
 			insertIntoDB(currentSong, "favourites");
 
-/*			var downloadPath = getStorageUrl(currentSong);
+			var downloadPath = getStorageUrl(currentSong);
 			resolveLocalFileSystemURL(downloadPath,
 				function(entry) {
 					console.log("Song found on device. Getting file size.");
@@ -1601,7 +1578,6 @@ function setupOtherStuff() {
 						updateCacheState();
 					});
 				});
-				*/
 		} else {
 			deleteFromDB(currentSong, "favourites");
 			deleteSong(currentSong);
@@ -2325,7 +2301,7 @@ function getSongList(offset, success, error)
 
 function getStorageUrl(song)
 {
-	return song.file_name;
+	return cordova.file.externalDataDirectory + song.file_name;
 }
 
 //just for dev

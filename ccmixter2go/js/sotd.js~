@@ -1,0 +1,708 @@
+var current;
+var currentSong;
+var stored_data;
+var position = null;
+var wrapper;
+var basePath;
+var fb_backup;
+var twitter_backup;
+var gplus_backup;
+var offset = 0;
+var resultSize;
+var limit = 25;
+
+function load(which, offset) 
+{
+	console.log("which: "+which);
+	position = page;
+	var song = stored_data.songs[which];
+	console.log("song: ");
+	console.log(song);
+	var page = wrapper[offset].id;
+	currentSong = song;
+	var selector = '#' + page;
+	
+//	$(selector + " .date").html("Today");
+
+	$('.download').attr('href', song.downloadLink);
+
+	$(selector + ' .license').attr('href', song.licenceLink);
+
+	var media = {
+		m4a : song.downloadLink
+	};
+	$(selector).data('media', media);
+
+	console.log("Setting title: "+song.title);
+	$(selector + ' .title').html(song.title);
+	
+	$(selector + ' .author').html(song.author);
+
+//	$(selector + " .date").html('"' + title + '" by ' + author);
+	
+	$(selector + ' .tags').html("ccMixter-Tags: " + song.tags);
+
+	$('#' + page + ' .ccmixter_ref').attr('href', song.url);
+	
+	$('#' + page + ' .license').attr('href', song.licenceLink);
+	var oldClass = $('#' + page + ' .license').data('license');
+	var license = song.license;
+	$('#' + page + ' .license').data('license', license);
+	if (oldClass) {
+		$('#' + page + ' .license').removeClass(oldClass);
+	}
+	$('#' + page + ' .license').addClass(license);
+	$('#' + page + ' .license').attr('alt', song.licenseName);
+	var highlight = false;
+	
+	if (song.isFavourite)
+	{
+		$('#' + page + ' .favourite').addClass('active');
+	} else {
+		$('#' + page + ' .favourite').removeClass('active');
+	}
+	var media = $('#' + page).data('media');
+	$('#' + page + ' .player')
+			.html(
+					'<canvas width="104" height="104" class="loader"></canvas><canvas width="104" height="104" class="status"></canvas>');
+    $('#' + page + ' .player').after('<div class="forward" style="background-color: green; height: 104px;margin-top:-104px; float:right; width: 104px;"/><div class="rewind" style="background-color: red; height: 104px;margin-top:-104px; float: left; width: 104px;"/></div>');
+	$('.forward').bind('click', function() {
+	    audio = $('#' + page + ' .player audio');
+	    if (audio != null) {
+		    audio[0].currentTime += 10;
+		    console.log(audio[0].currentTime);
+	    }
+	});
+	
+	$('.rewind').bind('click', function() {
+	    audio = $('#' + page + ' .player audio');
+	    if (audio != null) {
+		audio[0].pause();
+		    var start = audio[0].currentTime;
+		    var end = start - 10;
+		    audio[0].currentTime = end;
+console.log(start+" / "+end);
+		    progress_with_start('status', start * 100 / audio[0].duration, end * 100 / audio[0].duration, 'black');
+		audio[0].play();
+	    } else {
+console.log("no player found");
+	    }
+	});
+
+
+}
+function parseData(data) {
+	// add new songs to global lists
+	console.log("Old:");
+	console.log(stored_data);
+	var foundOldSongs = false;
+	
+	resultSize = data.length;
+
+	$.each(data, function(key, val) 
+	{
+		var data = val;
+		var song = new Object();
+		song.id = data.files[0].file_upload;
+
+		if (stored_data.ids.indexOf(song.id) == -1)
+		{
+		    console.log("Found new song");
+			song.url = data.files[0].file_page_url;
+			//song.downloadLink = "/ccmixter-songs/"+data.files[0].download_url.substring(20);
+			song.downloadLink = data.files[0].download_url;
+			song.licenceLink = data.license_url;
+			song.title = data.upload_name;
+			song.author = data.user_real_name;
+			song.tags = data.upload_tags;
+			
+			song.license = data.license_logo_url;
+			song.license = song.license.substring(song.license.lastIndexOf("/")+1, song.license.lastIndexOf("."));
+			song.license = song.license.substring(song.license.indexOf("-")+1);
+			song.licenseName = data.license_name;
+			
+	    	song.isFavourite = false;
+	    	
+	    	song.isPlaying = false;
+	    	
+	    	song.played = false;
+	    	
+			stored_data.songs[song.id] = song;
+			stored_data.ids.unshift(song.id);
+		} else {
+			foundOldSongs = true;
+		}
+	});
+	console.log("New:");
+	console.log(stored_data);
+	localStorage.setItem("songs", JSON.stringify(stored_data));
+	return foundOldSongs;
+}
+
+function toggleMedia() {
+	var page = wrapper[1].id;
+	var media = $('#' + page).data('media');
+	if ($('#' + page + ' .player audio').length == 0) {
+		var audio = new Audio();
+		var canPlayMp3 = !!audio.canPlayType
+				&& audio.canPlayType('audio/mpeg') != "";
+		if (canPlayMp3) {
+			audio.src = media.m4a;
+		} else {
+			alert("Get a new browser that support mp3 playback!");
+		}
+
+		audio.load();
+		audio.addEventListener("progress", function(event) {
+			var audio = event.target;
+			var percent = 0;
+			if ((typeof audio.buffered === "object")
+					&& (audio.buffered.length > 0)) {
+				if (audio.duration > 0) {
+					var bufferTime = 0;
+					for (var i = 0; i < audio.buffered.length; i++) {
+						bufferTime += audio.buffered.end(i)
+								- audio.buffered.start(i);
+					}
+					percent = 100 * bufferTime / audio.duration;
+				} // else the Metadata has not been read yet.
+			} else { // Fallback if buffered not supported
+				percent = 0; // Cleans up the inital conditions on all
+								// browsers, since seekPercent defaults to 100
+								// when object is undefined.
+			}
+			progress('loader', percent, 'black'); // Problem here at initial
+													// condition. Due to the
+													// Opera clause above of
+													// buffered.length > 0
+													// above... Removing it
+													// means Opera's white
+													// buffer ring never shows
+													// like with polyfill.
+		});
+		audio.addEventListener("timeupdate", function(event) {
+			var audio = event.target;
+			progress('status', audio.currentTime * 100 / audio.duration,
+					'#cef58a');
+		});
+		audio.addEventListener("canplay", function(event) {
+			var audio = event.target;
+			playMedia(audio);
+			currentSong.isPlayed = true;
+			console.log("playing song:");
+			console.log(currentSong);
+			console.log(stored_data.songs[currentSong.id]);
+			localStorage.setItem("songs", JSON.stringify(stored_data));
+		});
+		audio.addEventListener("ended", function(event) {
+			$('#' + page + ' .player').removeClass("playing");
+			localStorage.setItem("songs", JSON.stringify(stored_data));
+		});
+		$('#' + page + ' .player').append(audio);
+	} else {
+		var audio = $('#' + page + ' .player audio').get()[0];
+		if (!audio.paused) {
+			pauseMedia(audio);
+		} else {
+			playMedia(audio);
+		}
+	}
+}
+
+function progress(selector, percent, color) {
+	progress_with_start(selector, 0, percent, color);
+}
+
+function progress_with_start(selector, percent_start, percent_end, color) {
+	var canvas = $('#' + wrapper[1].id + ' .player .' + selector).get()[0];
+	var context = canvas.getContext('2d')
+	context.beginPath();
+	if ((percent_start != null) && (percent_start > 0)) {
+	    context.arc(52, 52, 46, 2 * Math.PI * percent_start / 100 - Math.PI	/ 2, 2 * Math.PI * percent_end / 100 - Math.PI	/ 2);
+	} else {
+	    context.arc(52, 52, 46, -Math.PI / 2, 2 * Math.PI * percent_end / 100 - Math.PI / 2);
+	}
+	context.lineWidth = 6;
+	context.strokeStyle = color;
+	context.stroke();
+	context.closePath();
+}
+
+function pauseCurrent() {
+	var page = wrapper[1].id;
+	if ($('#' + page + ' .player audio').length > 0) {
+		var audio = $('#' + page + ' .player audio').get()[0];
+		if (!audio.paused) {
+			audio.pause();
+			$('#' + page + ' .player').removeClass("playing");
+		}
+	}
+}
+
+function playMedia(audio) {
+	var page = wrapper[1].id;
+	audio.play();
+	$('#' + page + ' .player').addClass("playing");
+}
+
+function pauseMedia(audio) {
+	var page = wrapper[1].id;
+	audio.pause();
+	$('#' + page + ' .player').removeClass("playing");
+}
+
+$(document).ready(function() {
+    var query = document.location.search;
+	stored_data = getFromLocalStorage();
+	$.event.special.swipe.durationThreshold = 2000;
+	$.event.special.swipe.scrollSupressionThreshold = 50;
+	basePath = window.location.pathname;
+	$('#wrapper1').hide();
+	$.mobile.loading('show');
+	
+//	favourit_ids = getFavourites();
+//	if (favourit_ids.length == 0) {
+//		$('.load_favourites').css('display', 'none');
+//		$('.clear_favourites').css('display', 'none');
+//	}
+	var dataUrl = "/ccmixter-api?f=json&limit="+limit;
+	$.getJSON(dataUrl, function(data) {
+		parseData(data);
+
+		stored_data = getFromLocalStorage();
+		current = getFirstSongId();
+		
+		setUpData();
+		$("#" + wrapper[1].id).show();
+		$.mobile.loading('hide');
+		updateUrl();
+	});
+
+	var wrapper1 = $("#wrapper1");
+	var wrapper2 = $("#wrapper1").clone();
+	wrapper2.attr("id", "wrapper2");
+	wrapper2.insertAfter(wrapper1);
+	var wrapper3 = $("#wrapper1").clone();
+	wrapper3.attr("id", "wrapper3");
+	wrapper3.insertAfter(wrapper2);
+	wrapper = $(".wrapper").get();
+
+
+	$('.player').bind('click', function() {
+		toggleMedia();
+	});
+	
+	$("#" + wrapper[0].id).hide();
+	$("#" + wrapper[1].id).hide();
+	$("#" + wrapper[2].id).hide();
+
+	$('#options_dialog').popup({
+		history : false
+	});
+	$('#date_dialog').popup({
+		history : false
+	});
+
+	$('#gplus-switch').val('false').slider('refresh');
+	$('#fb-switch').val('false').slider('refresh');
+	$('#twitter-switch').val('false').slider('refresh');
+
+	fb_backup = $('#facebook').clone();
+	twitter_backup = $('#twitter').clone();
+	gplus_backup = $('#gplus').clone();
+
+	$("#fb-switch").on("change", function(event, ui) {
+		if (event.target.value == 'true') {
+			$('#fb-switch').slider({
+				disabled : true
+			});
+			enableFacebook(document, 'script', 'facebook-jssdk');
+		} else {
+			$('#facebook').empty();
+			$('#facebook').replaceWith(fb_backup.clone());
+		}
+	});
+
+	$("#gplus-switch").on("change", function(event, ui) {
+		if (event.target.value == 'true') {
+			$('#gplus-switch').slider({
+				disabled : true
+			});
+			window.___gcfg = {
+				lang : 'de'
+			};
+			var po = document.createElement('script');
+			po.type = 'text/javascript';
+			po.async = true;
+			po.src = 'https://apis.google.com/js/plusone.js';
+			var s = document.getElementsByTagName('script')[0];
+			s.parentNode.insertBefore(po, s);
+		} else {
+			$('#gplus').empty();
+			$('#gplus').replaceWith(gplus_backup.clone());
+		}
+	});
+
+	$("#twitter-switch").on("change", function(event, ui) {
+		$('#twitter-switch').slider({
+			disabled : true
+		});
+		twitter(event, ui);
+	});
+	$('.share').bind('click', function() {
+		updateUrl();
+		$('#share_dialog').popup('open');
+	});
+	$('.wrapper').bind('swipeleft', function(event) {
+		pauseCurrent();
+		console.log("swipeleft");
+		var nextSong = getNextSongId();
+		if (nextSong == -1) {
+			console.log("updating...");
+			offset = 0;
+			$.mobile.loading('show');
+			loadNewSongs();
+		} else {
+			activateNextSong(nextSong);
+		}
+	});
+
+	$('.wrapper').bind('swiperight', function(event) {
+		pauseCurrent();
+		var prevSong = getPrevSongId();
+		console.log("swiperight");
+		if (prevSong == -1) {
+			console.log("updating...");
+			$.mobile.loading('show');
+			loadOldSongs();
+		} else {
+			activatePrevSong(prevSong);
+		}		
+	});
+	$('.options').bind('click', function(event) {
+		$('#options_dialog').popup('open');
+	});
+	$('.gfx_credits').bind('click', function(event) {
+		$('#options_dialog').popup('close');
+		$('#gfx_credits_dialog').popup('open');
+	});
+	$('.selectdate').bind('click', function(event) {
+		$('#options_dialog').popup('close');
+		$('#date_dialog').popup('open');
+	});
+	$('.clear_all').bind('click', function() {
+		localStorage.clear();
+		stored_data = getFromLocalStorage();
+		updatePage();
+	});
+
+	$('.clear_favourites').bind('click', function() {
+		
+		for (var song in stored_data) {
+		    if (object.hasOwnProperty(property)) {
+		    	song.isFavourite = false;
+		    }
+		}
+		
+		$('#wrapper1 .favourite').removeClass('active');
+		$('#wrapper2 .favourite').removeClass('active');
+		$('#wrapper3 .favourite').removeClass('active');
+		getFavourites();
+		closeOptionsDialog(data_all.length - 1);
+		$('.load_favourites').css('display', 'none');
+		$('.clear_favourites').css('display', 'none');
+	});
+
+	$('.update').bind('click', function update() {
+		pauseCurrent();
+		updatePage();
+	});
+
+	$('.bookmark').bind('click', function update() {
+		window.history.replaceState(null, "", basePath + "?latest");
+		$('#options_dialog').popup('close');
+	});
+
+	$('.load_favourites').bind('click', function() {
+		setFavourites();
+		closeOptionsDialog(0);
+		$('.load_all').css('display', 'block');
+		$('.load_favourites').css('display', 'none');
+	});
+
+	$('.load_all').bind('click', function(event) {
+		data_all = stored_data;
+		closeOptionsDialog(data_all.length - 1);
+		$('.load_all').css('display', 'none');
+		updateFavouritesMenu();
+	});
+
+	$('.favourite').bind('click', function() {
+		currentSong.isFavourite = !currentSong.isFavourite;
+		if (!currentSong.isFavourite) {
+			$('#' + wrapper[1].id + ' .favourite').removeClass('active');
+		} else {
+			$('#' + wrapper[1].id + ' .favourite').addClass('active');
+		}
+		localStorage.setItem("all_data", JSON.stringify(stored_data));
+		updateFavouritesMenu(currentSong.isFavourite);
+	});
+});
+
+function loadOldSongs() {
+	console.log("offset param: "+offset);
+	offset += resultSize;
+	var dataUrl = "/ccmixter-api?f=json&limit="+limit+"&offset="+offset;
+	$.getJSON(dataUrl, function(data) {
+		parseData(data);
+		prevSong = getPrevSongId();
+		if (prevSong > -1) {
+    		$.mobile.loading('hide');
+			activatePrevSong(prevSong);
+		} else {
+		    loadOldSongs();
+		}
+	});
+}
+
+
+function loadNewSongs() {
+	var dataUrl = "/ccmixter-api?f=json&limit="+limit+"&offset="+offset;
+	$.getJSON(dataUrl, function(data) {
+		var foundOldSongs = parseData(data);
+		console.log("foundOldSongs: "+foundOldSongs);
+		if (!foundOldSongs) {
+		    offset += resultSize;
+		    console.log("offset set to:"+resultSize);
+			loadNewSongs();
+		} else {
+			$.mobile.loading('hide');
+			nextSong = getNextSongId();
+			if (nextSong > -1) {
+				activateNextSong(nextSong);
+			}
+		}
+	});
+	
+}
+
+function activateNextSong(nextSong) {
+	current = nextSong;
+    load(nextSong, 2);
+	$("#" + wrapper[1].id).hide("slide", {}, 400);
+	$("#" + wrapper[2].id).show("slide", {
+		direction : "right"
+	}, 400, function() {
+		wrapper.push(wrapper.shift());
+	});
+	updateUrl();
+}
+
+function activatePrevSong(prevSong) {
+	current = prevSong;
+	load(prevSong, 0);
+	$("#" + wrapper[1].id).hide("slide", {
+		direction : "right"
+	}, 400);
+	$("#" + wrapper[0].id).show("slide", {}, 400, function() {
+		wrapper.unshift(wrapper.pop());
+	});
+	updateUrl();
+}
+
+
+function findCurrentIdx() {
+	console.log("[findCurrentIdx] current: "+current);
+	for (var i = 0; i < stored_data.songs.length; i++)
+	{
+		if ((stored_data.songs[i] != null) && (stored_data.songs[i].id == current)) 
+		{
+			console.log("currentId: "+i);
+			return i;
+		}
+	}
+	console.log("No idx found for "+current);
+	return -1;
+	
+}
+
+function getNextSongId() 
+{
+	var candidateIdx = findCurrentIdx();
+	console.log("candidateIdx: "+candidateIdx);
+	while (candidateIdx < stored_data.songs.length)
+	{
+		candidateIdx++;
+		var candidate = stored_data.songs[candidateIdx];
+		console.log("candidate:");
+		console.log(candidate);
+		if ((candidate != null) && (candidate.isFavourite || !candidate.isPlayed)) {
+			console.log("next song id: "+current);
+			return candidateIdx;
+		}
+	}
+	return -1;
+}
+
+function getFirstSongId() 
+{
+	var candidateIdx = stored_data.songs.length-1;
+	console.log("candidateIdx: "+candidateIdx);
+	
+	while (candidateIdx > 0)
+	{
+		var candidate = stored_data.songs[candidateIdx];
+		console.log("candidate:");
+		console.log(candidate);
+		if ((candidate != null) && (candidate.isFavourite || !candidate.isPlayed)) {
+			console.log("first song id: "+candidate.id);
+			return candidateIdx;
+		}
+		candidateIdx--;
+	}
+	return -1;
+}
+
+function getPrevSongId() 
+{
+	var candidateIdx = findCurrentIdx();
+	console.log("Searching for prev song...");
+	while (candidateIdx > 0)
+	{
+		candidateIdx--;
+		var candidate = stored_data.songs[candidateIdx];
+		if (candidate != null) {
+		    console.log(candidate);
+		}
+		if ((candidate != null) && (candidate.isFavourite || !candidate.isPlayed)) {
+			console.log("prev song id: "+candidateIdx);
+			return candidateIdx;
+		}
+	}
+	return -1;
+}
+
+function updateFavouritesMenu(enable) {
+	if (enable) {
+		$('.load_favourites').css('display', 'block');
+		$('.clear_favourites').css('display', 'block');
+	} else {
+		$('.load_favourites').css('display', 'none');
+		$('.clear_favourites').css('display', 'none');
+	}
+}
+
+function setUpData() {
+	load(current, 1);
+	$('.download').attr('href', stored_data.songs[current].downloadLink);
+	/*
+	var nextSongId = getNextSongId();
+	var prevSongId = getPrevSongId();
+	if (nextSongId > -1) {
+		load(nextSongId, 2);
+	}
+	if (prevSongId > -1) {
+		current = prevSongId;
+		load(prevSongId, 0);
+	}
+	*/
+	load(current, 1);
+	$('.download').attr('href', stored_data.songs[current].downloadLink);
+}
+
+function getFromLocalStorage() {
+	var loaded_data = localStorage.getItem("songs");
+	loaded_data = JSON.parse(loaded_data);
+	if (loaded_data == null) {
+		loaded_data = new Object();
+		loaded_data.ids = new Array(); 
+		loaded_data.songs = new Array();
+	}
+	return loaded_data;	
+}
+
+function scroll() {
+	if (navigator.userAgent.match(/Android/i)) {
+		// window.scrollTo(0,0); // reset in case prev not scrolled
+		var nPageH = $(document).height();
+		var nViewH = window.outerHeight;
+		if (nViewH > nPageH) {
+			nViewH = nViewH / window.devicePixelRatio;
+			$('body').css('height', nViewH + 'px');
+		}
+		window.scrollTo(0, 1);
+	}
+}
+
+function setFavourites() {
+	var data_new = new Array();
+	for (i = 0; i < favourit_ids.length; i++) {
+		for (j = 0; j < stored_data.length; j++) {
+			if (stored_data[j].id == favourit_ids[i])
+			{
+				data_new.push(stored_data[j]);
+			}
+		}
+	}
+	stored = data_new;
+	current = 0;
+}
+
+function closeOptionsDialog(new_current) {
+	current = new_current;
+	$('#options_dialog').popup('close');
+	setUpData();
+	updateUrl();
+}
+
+function updateUrl() {
+//	var url = basePath + "?song=" + data_all[current][11];
+//	window.history.replaceState(null, "", url);
+}
+
+function updatePage() {
+	$('#options_dialog').popup('close');
+	$.mobile.loading('show');
+	$("#" + wrapper[1].id).fadeTo("slow", 0.33, function() {
+		var date = "";
+		if (stored_data.length > 0) {
+			date = '?last=' + stored_data[stored_data.length - 1][0];
+		}
+		$.getJSON("data.php" + date, function(data) {
+			parseData(data);
+			$("#" + wrapper[1].id).fadeTo("slow", 1, function() {
+				$.mobile.loading('hide');
+				closeOptionsDialog(data_all.length - 1);
+				// window.history.replaceState(null, "", basePath+"?latest");
+			});
+		})
+	});
+}
+
+function enableFacebook(d, s, id) {
+	var js, fjs = d.getElementsByTagName(s)[0];
+	if (d.getElementById(id))
+		return;
+	js = d.createElement(s);
+	js.id = id;
+	js.src = "//connect.facebook.net/de_DE/all.js#xfbml=1&appId=254075584634987";
+	fjs.parentNode.insertBefore(js, fjs);
+};
+
+function enableTwitter(d, s, id) {
+	var js, fjs = d.getElementsByTagName(s)[0];
+	if (!d.getElementById(id)) {
+		js = d.createElement(s);
+		js.id = id;
+		js.src = "//platform.twitter.com/widgets.js";
+		fjs.parentNode.insertBefore(js, fjs);
+	}
+}
+function twitter(event, ui) {
+	if (event.target.value == 'true') {
+		enableTwitter(document, "script", "twitter-wjs");
+	} else {
+		$('#twitter').empty();
+		$('#twitter').replaceWith(twitter_backup.clone());
+	}
+}
