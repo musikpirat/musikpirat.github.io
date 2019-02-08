@@ -1,6 +1,6 @@
 var cacheName = 'ccmixter2go';
 
-var filesToCache = ["/", "/index.html", "/js/sotd.js", "/manifest.json"];
+var filesToCache = ["index.html", "js/sotd.js", "manifest.json"];
 
 self.addEventListener('install', function(e) {
   console.log('[ServiceWorker] Install');
