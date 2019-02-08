@@ -1729,7 +1729,7 @@ function loadOldSongs(offset, callback) {
 function loadNewSongs(offset, callback) {
 	console.log("loadNewSongs");
 	getSongList(0, callback, function() {
-		xxx
+		//xxx
 		console.log("No new songs found. Increasing offset.");
 	  offset += resultSize;
 	  console.log("offset set to:"+resultSize);
