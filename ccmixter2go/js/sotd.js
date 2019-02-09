@@ -1664,7 +1664,7 @@ function taphold() {
 		} else {
 			$('#discard_favourite').popup("open");
 		}
-	}
+	});
 }
 
 function swipeRight() {
