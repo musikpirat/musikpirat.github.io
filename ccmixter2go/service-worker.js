@@ -1,11 +1,13 @@
 var cacheName = 'ccmixter2go';
 
+var webCacheName = 'ccmixter2goData';
+
 var filesToCache = ["index.html", "js/sotd.js", "manifest.json"];
 
 self.addEventListener('install', function(e) {
   console.log('[ServiceWorker] Install');
   e.waitUntil(
-    caches.open(cacheName).then(function(cache) {
+    caches.open(webCacheName).then(function(cache) {
       console.log('[ServiceWorker] Caching app shell');
       return cache.addAll(filesToCache);
     })
@@ -20,7 +22,7 @@ self.addEventListener('activate', function(e) {
   e.waitUntil(
     caches.keys().then(function(keyList) {
       return Promise.all(keyList.map(function(key) {
-        if (key !== cacheName) {
+        if ((key !== cacheName) && (key !== webCacheName)) {
           console.log('[ServiceWorker] Removing old cache', key);
           return caches.delete(key);
         }
@@ -114,7 +116,7 @@ self.addEventListener('fetch', function(e) {
   } else {
     console.log("Matching generic request "+e.request.urk+": ", caches.match(e.request.url));
     e.respondWith(
-      caches.open(cacheName).then(function(cache) {
+      caches.open(webCacheName).then(function(cache) {
         return cache.match(e.request.url).then(function(response) {
             if (response) {
               console.log('[ServiceWorker] Found cached response: ', response);
