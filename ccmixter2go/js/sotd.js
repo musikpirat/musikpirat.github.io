@@ -1658,13 +1658,11 @@ function discardSong(callback) {
 
 function taphold() {
 	console.log("taphold");
-	isSongFavourite(currentSong.id, isFavourite => {
-		if (!isFavourite) {
-			$('#discard_dialog').popup("open");
-		} else {
-			$('#discard_favourite').popup("open");
-		}
-	});
+	if (currentSong.isFavourite) {
+  	$('#discard_favourite').popup("open");
+	} else {
+		$('#discard_dialog').popup("open");
+	}
 }
 
 function swipeRight() {
