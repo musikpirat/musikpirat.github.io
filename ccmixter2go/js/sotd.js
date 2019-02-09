@@ -1490,8 +1490,7 @@ function setupOtherStuff() {
 
   $('#discardButton').bind('click', function(event) {
 		debug("Song was discarded by user", currentSong);
-		currentSong.isFavourite = false;
-		swipeRight();
+    discardSong(swipeRight);
 	});
 
 	$('.wrapper').bind('swiperight', function(event) {
@@ -1640,30 +1639,32 @@ function checkIfFavsAreInPlaylist(loadedFavourites, song) {
 }
 
 function discardSong(callback) {
-		console.log("ft != null: "+(ft != null));
 		console.log("download_id == current "+download_id+" / "+current);
 		if (playMode == "favourites")
 		{
 			deleteFromDB(currentSong, "favourites");
+			deleteSong(currentSong, callback);
 		} else {
 			if (!currentSong.isFavourite) {
 				console.log("Current song is no fav, so marking it as skipped");
 				currentSong.isSkipped = true;
-				deleteSong(currentSong, downloadNewSongs);
+				deleteSong(currentSong, callback);
 			} else {
 				console.log("Current song is a fav, so not marking it as skipped");
 			}
 			insertIntoDB(currentSong, playMode);
 		}
-		if ((ft != null) && (download_id == current)) {
-			ft.abort();
-			ft = null;
-		}
 }
 
 function taphold() {
 	console.log("taphold");
-	$('#discard_dialog').popup("open");
+	isSongFavourite(currentSong.id, isFavourite => {
+		if (!isFavourite) {
+			$('#discard_dialog').popup("open");
+		} else {
+			$('#discard_favourite').popup("open");
+		}
+	}
 }
 
 function swipeRight() {
