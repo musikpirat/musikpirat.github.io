@@ -4,7 +4,7 @@
   "lang": "de",
   "start_url": "index.html",
   "display": "standalone",
-  "orientation": "landscape",
+  "orientation": "portrait-primary",
   "theme_color": "#000000",
   "background_color": "#ffffff",
   "icons": [
