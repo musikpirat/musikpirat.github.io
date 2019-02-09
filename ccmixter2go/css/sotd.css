@@ -199,6 +199,7 @@
 
 .loading_status {
     background-color: black;
+    background-image: linear-gradient(to bottom right, red, green);
     height: 100%;
     width: 0%;
     position: absolute;
@@ -206,7 +207,7 @@
 }
 
 .play_status {
-    background-color: green;
+    background-image: linear-gradient(to bottom right, red, yellow);
     height: 100%;
     width: 0%;
     position: absolute;
