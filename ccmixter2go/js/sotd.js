@@ -1278,14 +1278,12 @@ function setupOtherStuff() {
 	auto_download = getBooleanFromLocalStorage("auto_download", true);
 	auto_download_wlan_only = getBooleanFromLocalStorage("auto_download_wlan_only", true);
 	initialStart = getBooleanFromLocalStorage("initialStart", true);
-/*
 	if (initialStart) {
 		localStorage.setItem("initialStart", JSON.stringify(false));
 		$('#wrapper1').css('display', 'none');
 		$('#initial_dialog').popup();
 		$('#initial_dialog').popup("open");
 	}
-*/
 
 	randomPlay = getBooleanFromLocalStorage("randomPlay", randomPlay);
 
@@ -1295,24 +1293,6 @@ function setupOtherStuff() {
 	$("#storage_size").val(storage_size);
 	$("#storage_size").attr("max", Number(storage_size)+100);
 	$("#storage_size").slider("refresh");
-
-	/*
-	if (initialStart) {
-		cordova.exec(function(freeSpace) {
-			freeSpace = freeSpace / 1024 / 1024;
-			if (freeSpace > storage_size)
-			{
-				storage_size = freeSpace - 10;
-				if (storage_size < 10) {
-					alert("Less than 10 MB storage available.<br>You might not be able to use ccMixter2go.", "Not enough free space.");
-				}
-				console.log("Storage limited to "+storage_size);
-			}
-		}, function() {
-			alert("Could not get free space.");
-		}, "File", "getFreeDiskSpace", []);
-	}
-  */
 
 	console.log("auto_download: "+auto_download+" "+"auto_download_wlan_only: "+auto_download_wlan_only);
 
