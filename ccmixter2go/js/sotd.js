@@ -723,12 +723,12 @@ function shuffle(success) {
 			success(currentSong);
 		} else {
 			setupRandomSongs(count);
-			var next = randomSongs.pop();
+			var randomId = randomSongs.pop();
 			if (randomSongs.length == 0) {
 				setupRandomSongs();
 			}
-			console.log("Random is "+count);
-			getShuffledSong('favourites', count, function(song) {
+			console.log("Random is "+randomId);
+			getShuffledSong('favourites', randomId, function(song) {
 				debug("Shuffled song is ", song);
 				isSongReadyToPlay(song, function()  {
 						success(song);
