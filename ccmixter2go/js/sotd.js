@@ -729,14 +729,19 @@ function shuffle(success) {
 			}
 			console.log("Random is "+randomId);
 			getShuffledSong('favourites', randomId, function(song) {
-				debug("Shuffled song is ", song);
-				isSongReadyToPlay(song, function()  {
-						success(song);
-					}, function() {
-						console.log("Song not ready to play. Shuffelling again...");
-						shuffle(success);
-					}
-				);
+				if (song.id == currentSong.id) {
+					 console.log("Found current song. Picking new one.");
+					 shuffle(success);
+				} else {
+					debug("Shuffled song is ", song);
+					isSongReadyToPlay(song, function()  {
+							success(song);
+						}, function() {
+							console.log("Song not ready to play. Shuffelling again...");
+							shuffle(success);
+						}
+					);
+				}
 			});
 		}
 	});
