@@ -45,6 +45,8 @@ var allSongs = false;
 
 var show_former_favourites = false;
 
+var randomSongs;
+
 function onDeviceReady()
 {
 	console.log("onDeviceReady");
@@ -693,6 +695,23 @@ function toggleMedia() {
 	}
 }
 
+function setupRandomSongs(count) {
+	console.log("Calculating new random songs");
+	randomSongs = [];
+	for (i = 0; i < tracks.length-1; i++) {
+		var next;
+		do {
+			next = Math.floor(Math.random()*tracks.length);
+			var picked = false;
+			for (j = 0; j < randomSongs.length; j++) {
+				picked = picked || (randomSongs[j] == next);
+			}
+		} while (picked);
+		randomSongs.push(next);
+	}
+	console.log(randomSongs);
+}
+
 function shuffle(success) {
 	getCount('favourites', function(count) {
 		console.log("Count is "+count);
@@ -703,21 +722,20 @@ function shuffle(success) {
 			console.log("Fav count is one. Random makes no sense...");
 			success(currentSong);
 		} else {
-			count = Math.round(Math.random()*(count-1));
+			setupRandomSongs(count);
+			var next = randomSongs.pop();
+			if (randomSongs.length == 0) {
+				setupRandomSongs();
+			}
 			console.log("Random is "+count);
 			getShuffledSong('favourites', count, function(song) {
 				debug("Shuffled song is ", song);
-				if (song.id == currentSong.id) {
-					console.log("Noooo... Found the current song");
-					shuffle(success);
-				} else {
-					isSongReadyToPlay(song, function()  {
-							success(song);
-						}, function() {
-							console.log("Song not ready to play. Shuffelling again...");
-							shuffle(success);
-						}
-					);
+				isSongReadyToPlay(song, function()  {
+						success(song);
+					}, function() {
+						console.log("Song not ready to play. Shuffelling again...");
+						shuffle(success);
+					}
 				}
 			});
 		}
