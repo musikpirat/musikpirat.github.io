@@ -736,7 +736,7 @@ function shuffle(success) {
 						console.log("Song not ready to play. Shuffelling again...");
 						shuffle(success);
 					}
-				}
+				);
 			});
 		}
 	});
