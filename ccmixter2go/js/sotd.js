@@ -1251,6 +1251,9 @@ function setupPage() {
 					}, function() {
 						dialog("Did you finish listening all songs meanwhile?");
 					});
+				} else if (playMode == "favourites") {
+					randomPlay = true;
+					shuffle(song => debug("Next song will be", song));
 				} else {
 					console.log("Searching for new songs only if in songs/edPicks mode. Mode is: "+playMode);
 				}
