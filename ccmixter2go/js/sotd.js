@@ -698,12 +698,12 @@ function toggleMedia() {
 function setupRandomSongs(count) {
 	console.log("Calculating new random songs");
 	randomSongs = [];
-	for (i = 0; i < tracks.length-1; i++) {
+	for (i = 0; i < count-1; i++) {
 		var next;
 		do {
-			next = Math.floor(Math.random()*tracks.length);
+			next = Math.floor(Math.random()*count);
 			var picked = false;
-			for (j = 0; j < randomSongs.length; j++) {
+			for (j = 0; j < count; j++) {
 				picked = picked || (randomSongs[j] == next);
 			}
 		} while (picked);
