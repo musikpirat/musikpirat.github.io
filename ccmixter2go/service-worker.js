@@ -1,6 +1,6 @@
 var cacheName = 'ccmixter2go';
 
-var webCacheName = 'ccmixter2goData';
+var webCacheName = 'ccmixter2goWebData';
 
 var filesToCache = ["index.html", "js/sotd.js", "manifest.json"];
 
