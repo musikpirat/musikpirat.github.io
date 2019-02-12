@@ -765,7 +765,7 @@ function pauseCurrent(callback) {
 	isSongFavourite(currentSong.id, function(favourite) {
 		console.log("Fav: "+favourite+" !show_former_favourites: "+!show_former_favourites+
 			" (currentSong.isPlaying || currentSong.isPlayed)"+(currentSong.isPlaying || currentSong.isPlayed));
-		if (!show_former_favourites && (currentSong.isPlaying || currentSong.isPlayed)) {
+		if (!favourite && !show_former_favourites && (currentSong.isPlaying || currentSong.isPlayed)) {
 			discardSong(downloadNewSongs);
 		}
 		if (callback) {
