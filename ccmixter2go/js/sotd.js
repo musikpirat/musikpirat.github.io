@@ -780,9 +780,14 @@ function deleteSong(song, callback)
 	var songUrl = song.downloadLink;
 	songUrl = "https://ccmixter.christian-hufgard.de/"+songUrl.substr(songUrl.indexOf("/content")+1);
 	console.log("url is: "+songUrl);
-	caches.open("ccmixter2go")
+	if (callback) {
+   	  caches.open("ccmixter2go")
 		.then(cache => cache.delete(songUrl))
 		.then(callback());
+  } else {
+   	  caches.open("ccmixter2go")
+		.then(cache => cache.delete(songUrl));
+  }
 	//xxx
 	return;
 	resolveLocalFileSystemURL(downloadPath, function(entry) {
