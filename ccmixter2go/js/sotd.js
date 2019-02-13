@@ -665,13 +665,6 @@ function toggleMedia() {
 			insertIntoDB(currentSong, playMode);
 
 			if (playMode == "favourites") {
-				playNextFav = function(song) {
-					debug("next fav is ", song);
-					audio.pause();
-					audio.src = null;
-					load(song, 1);
-					toggleMedia();
-				};
 				if (randomPlay) {
 					shuffle(playNextFav);
 				} else {
@@ -693,6 +686,14 @@ function toggleMedia() {
 			playMedia();
 		}
 	}
+}
+
+function playNextFav(song) {
+	debug("next fav is ", song);
+	audio.pause();
+	audio.src = null;
+	load(song, 1);
+	toggleMedia();
 }
 
 function setupRandomSongs(count) {
@@ -1238,6 +1239,7 @@ function setupPage() {
 				setupPage();
 			} else {
 				loadSong(song);
+				console.log("playMode: "+playMode);
 				if ((playMode == "songs") || (playMode == "edPicks")) {
 					getHighestId(playMode, function(song) {
 						var oldHighestId = song.id;
@@ -1315,8 +1317,6 @@ function setupOtherStuff() {
 		$('#initial_dialog').popup();
 		$('#initial_dialog').popup("open");
 	}
-
-	randomPlay = getBooleanFromLocalStorage("randomPlay", randomPlay);
 
 	newestLoadedSong = getIntFromLocalStorage("newestLoadedSong", Number.MAX_VALUE);
 
@@ -1577,13 +1577,17 @@ function setupOtherStuff() {
 
 	$('.forward').bind('click', function() {
 		pauseCurrent();
-		getHighestId(playMode, activateNextSong);
+		if (playMode === "favourites") {
+  		shuffle(playNextFav);
+    } else {
+			getHighestId(playMode, activateNextSong);
+		}
 	});
 
 	$('.rewind').bind('click', function() {
 		pauseCurrent();
 		if (playMode === "favourites") {
-			getLowestId(playMode, activatePrevSong);
+			shuffle(playNextFav);
 		} else {
 			getLowestUnfavedId(playMode, null, activatePrevSong);
 		}
@@ -1670,6 +1674,7 @@ function checkIfFavsAreInPlaylist(loadedFavourites, song) {
 }
 
 function discardSong(callback) {
+	debug("discardSong", currentSong);
 		console.log("download_id == current "+download_id+" / "+current);
 		if (playMode == "favourites")
 		{
@@ -2121,7 +2126,7 @@ function getShuffledSong(type, idx, callback) {
 	var trans = db.transaction(type, 'readonly');
 	var store = trans.objectStore(type);
 	var range = IDBKeyRange.lowerBound(0);
-	console.log("Reading data from db. Index is: "+idx);
+	console.log("Reading data from "+type+". Index is: "+idx);
 	var cursorRequest = store.openCursor(range);
 	var count = 0;
 	cursorRequest.onsuccess = function(evt) {
