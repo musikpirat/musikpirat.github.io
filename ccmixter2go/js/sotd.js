@@ -726,10 +726,10 @@ function shuffle(success) {
 			console.log("Fav count is one. Random makes no sense...");
 			success(currentSong);
 		} else {
-			var randomId = randomSongs.pop();
 			if (randomSongs.length == 0) {
 				setupRandomSongs(count);
 			}
+			var randomId = randomSongs.pop();
 			console.log("Random is "+randomId);
 			getShuffledSong('favourites', randomId, function(song) {
 				if (song.id == currentSong.id) {
