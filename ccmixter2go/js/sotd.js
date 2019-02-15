@@ -1451,6 +1451,8 @@ function setupOtherStuff() {
 				getHighestId("favourites", startFavPlay);
 			};
 			if (randomPlay) {
+				console.log("Resetting random songs");
+				randomSongs = [];
 				shuffle(startFavPlay);
 			} else {
 				if (autoDownloadEnabled()) {
