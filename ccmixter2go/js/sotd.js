@@ -640,7 +640,10 @@ function toggleMedia() {
 		console.log("Creating new audio element.");
 		audio = new Audio();
 
-		audio.src = currentSong.downloadLink;
+		var songUrl = currentSong.downloadLink;
+		songUrl = "https://ccmixter.christian-hufgard.de/"+songUrl.substr(songUrl.indexOf("/content")+1);
+
+		audio.src = songUrl;
 
 		playWhenReady = true;
 		downloadSong(currentSong);
@@ -697,9 +700,9 @@ function playNextFav(song) {
 }
 
 function setupRandomSongs(count) {
-	console.log("Calculating new random songs");
+	console.log("Calculating new random songs for "+count+" favs");
 	randomSongs = [];
-	for (i = 0; i < count-1; i++) {
+	for (i = 0; i < count; i++) {
 		var next;
 		do {
 			next = Math.floor(Math.random()*count);
@@ -723,10 +726,9 @@ function shuffle(success) {
 			console.log("Fav count is one. Random makes no sense...");
 			success(currentSong);
 		} else {
-			setupRandomSongs(count);
 			var randomId = randomSongs.pop();
 			if (randomSongs.length == 0) {
-				setupRandomSongs();
+				setupRandomSongs(count);
 			}
 			console.log("Random is "+randomId);
 			getShuffledSong('favourites', randomId, function(song) {
@@ -1600,8 +1602,17 @@ function setupOtherStuff() {
 		console.log(currentSong);
 		if (!currentSong.isFavourite) {
 			$('#' + wrapper[1].id + ' .favourite').removeClass('active');
+			if (playMode == 'favourives') {
+				let randomIdx = randomSongs.indexOf(currentSong.id);
+				if (randomIdx > -1) {
+					randomSongs.splice(randomIdx, 1);
+				}
+			}
 		} else {
 			$('#' + wrapper[1].id + ' .favourite').addClass('active');
+			if (playMode == 'favourives') {
+				randomSongs.push(currentSong.id);
+			}
 		}
 
 		if (online()) {
@@ -2129,10 +2140,11 @@ function getShuffledSong(type, idx, callback) {
 	console.log("Reading data from "+type+". Index is: "+idx);
 	var cursorRequest = store.openCursor(range);
 	var count = 0;
+	var song;
 	cursorRequest.onsuccess = function(evt) {
 	  var result = evt.target.result;
 		if (result) {
-			var song = result.value;
+			song = result.value;
 			debug("Song in iteration "+count+": ",song);
 			if (count == idx) {
 				callback(song);
@@ -2141,6 +2153,8 @@ function getShuffledSong(type, idx, callback) {
 				result.continue();
 			}
 		} else {
+			console.log("Did not get a result anymore. Favs must have changed their number. Return last song.");
+			callback(song);
 		}
   };
 }
