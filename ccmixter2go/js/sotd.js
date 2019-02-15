@@ -665,7 +665,11 @@ function toggleMedia() {
       $('#' + page + ' .player').removeClass("pause");
       currentSong.isPlaying = false;
       currentSong.isPlayed = true;
-			insertIntoDB(currentSong, playMode);
+			if (!currentSong.isFavourite && playMode == "favourites") {
+				console.log("Found discarded fav");
+			} else {
+			  insertIntoDB(currentSong, playMode);
+      }
 
 			if (playMode == "favourites") {
 				if (randomPlay) {
