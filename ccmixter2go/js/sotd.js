@@ -726,7 +726,7 @@ function shuffle(success) {
 			console.log("Fav count is one. Random makes no sense...");
 			success(currentSong);
 		} else {
-			if (randomSongs.length == 0) {
+			if (!randomSongs || randomSongs.length == 0) {
 				setupRandomSongs(count);
 			}
 			var randomId = randomSongs.pop();
