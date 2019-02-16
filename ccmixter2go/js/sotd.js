@@ -913,9 +913,10 @@ function setup() {
 }
 
 function titleScroller() {
-		text = documentTitle;
 		setTimeout(function () {
-				titleScroller(text.substr(1) + text.substr(0, 1));
+			documentTitle = documentTitle.substr(1) + documentTitle.substr(0, 1);
+			document.title = documentTitle;
+		  titleScroller();
 		}, 500);
 };
 
