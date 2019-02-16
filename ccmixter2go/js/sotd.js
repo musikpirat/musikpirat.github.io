@@ -550,6 +550,8 @@ function load(song, offset)
 		$('#' + page + ' .favourite').removeClass('active');
 	}
 
+  document.title = song.title + " / " + song.author;
+
 	$('.status').bind('click', function(event) {
 	    var status_width = $(event.target).innerWidth();
 	    var offset = event.offsetX;
