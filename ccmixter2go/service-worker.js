@@ -116,8 +116,14 @@ self.addEventListener('fetch', function(e) {
   } else {
     console.log("Matching generic request "+e.request.urk+": ", caches.match(e.request.url));
     e.respondWith(
-      caches.open(webCacheName).then(function(cache) {
-        return cache.match(e.request.url).then(function(response) {
+      fetchWithTimeout(e.request.url, 5000, response =>
+        caches.open(webCacheName).then(function(cache) {
+          cache.put(e.request.url, response.clone());
+        };
+        return response;
+      function() {
+        caches.open(webCacheName).then(function(cache) {
+          return cache.match(e.request.url).then(function(response) {
             if (response) {
               console.log('[ServiceWorker] Found cached response: ', response);
               return response;
@@ -129,11 +135,26 @@ self.addEventListener('fetch', function(e) {
               });
             }
           })
-      })
+        })
+      });
     );
   }
 });
 
+function fetchWithTimeout(url, timeout, resolve, reject) {
+  return new Promise((resolve, reject) => {
+         // Set timeout timer
+         let timer = setTimeout(
+             () => reject( new Error('Request timed out') ),
+             timeout
+         );
+
+         fetch( url ).then(
+             response => resolve( response ),
+             err => reject( err )
+         ).finally( () => clearTimeout(timer) );
+     });
+}
 
 function progress(loaded, total) {
   var percent = (loaded / total * 100);
