@@ -916,12 +916,14 @@ function setup() {
 
 function titleScroller() {
 		setTimeout(function () {
-			if (shiftedDocumentTitle.length == 1) {
-				shiftedDocumentTitle = documentTitle;
+			if (currentSong) {
+				if (shiftedDocumentTitle.length <= currentSong.author.length) {
+					shiftedDocumentTitle = documentTitle;
+				} else {
+				  shiftedDocumentTitle = shiftedDocumentTitle.substr(1);
+				}
+				document.title = shiftedDocumentTitle;
 			}
-			shiftedDocumentTitle = shiftedDocumentTitle.substr(1);
-			document.title = shiftedDocumentTitle;
-			console.log("New title: "+document.title);
 		  titleScroller();
 		}, 500);
 };
