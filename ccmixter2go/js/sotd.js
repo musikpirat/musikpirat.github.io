@@ -49,8 +49,6 @@ var randomSongs;
 
 var documentTitle = "ccmixter2Go";
 
-document.addEventListener("deviceready", onDeviceReady, false);
-
 function findSongThatMightBeNotDownloaded(id, type, success, error)
 {
 	console.log("[findSongThatMightBeNotDownloaded] id "+id+" type: "+type);
