@@ -916,6 +916,7 @@ function titleScroller() {
 		setTimeout(function () {
 			documentTitle = documentTitle.substr(1) + documentTitle.substr(0, 1);
 			document.title = documentTitle;
+			console.log("New title: "+document.title);
 		  titleScroller();
 		}, 500);
 };
