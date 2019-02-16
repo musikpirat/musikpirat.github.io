@@ -913,6 +913,7 @@ function setup() {
 }
 
 function titleScroller() {
+	console.log("titleScroller called");
 		setTimeout(function () {
 			documentTitle = documentTitle.substr(1) + documentTitle.substr(0, 1);
 			document.title = documentTitle;
