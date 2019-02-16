@@ -725,7 +725,7 @@ function shuffle(success) {
 		console.log("Count is "+count);
 		if (count === 0) {
 			console.log("Fav count is zero");
-			dialog("Seems you have no more favourites.");
+			dialog("Seems you have no favourites chosen yet.");
 		} else if (count == 1) {
 			console.log("Fav count is one. Random makes no sense...");
 			success(currentSong);
