@@ -117,11 +117,12 @@ self.addEventListener('fetch', function(e) {
     console.log("Matching generic request "+e.request.urk+": ", caches.match(e.request.url));
     e.respondWith(
       fetchWithTimeout(e.request.url, 5000, response =>
-        caches.open(webCacheName).then(function(cache) {
+        {
+          caches.open(webCacheName).then(function(cache) {
           cache.put(e.request.url, response.clone());
-        });
-        return response;
-      function() {
+          });
+          return response;
+        }, function() {
         caches.open(webCacheName).then(function(cache) {
           return cache.match(e.request.url).then(function(response) {
             if (response) {
