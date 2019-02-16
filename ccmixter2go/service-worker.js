@@ -119,7 +119,7 @@ self.addEventListener('fetch', function(e) {
       fetchWithTimeout(e.request.url, 5000, response =>
         caches.open(webCacheName).then(function(cache) {
           cache.put(e.request.url, response.clone());
-        };
+        });
         return response;
       function() {
         caches.open(webCacheName).then(function(cache) {
