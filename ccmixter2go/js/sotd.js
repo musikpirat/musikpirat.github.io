@@ -49,6 +49,8 @@ var randomSongs;
 
 var documentTitle = "ccmixter2Go";
 
+var shiftedDocumentTitle = "";
+
 function findSongThatMightBeNotDownloaded(id, type, success, error)
 {
 	console.log("[findSongThatMightBeNotDownloaded] id "+id+" type: "+type);
@@ -913,10 +915,12 @@ function setup() {
 }
 
 function titleScroller() {
-	console.log("titleScroller called");
 		setTimeout(function () {
-			documentTitle = documentTitle.substr(1) + documentTitle.substr(0, 1);
-			document.title = documentTitle;
+			if (shiftedDocumentTitle.length == 0) {
+				shiftedDocumentTitle = documentTitle;
+			}
+			shiftedDocumentTitle = shiftedDocumentTitle.substr(1);
+			document.title = shiftedDocumentTitle;
 			console.log("New title: "+document.title);
 		  titleScroller();
 		}, 500);
