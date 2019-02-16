@@ -47,22 +47,7 @@ var show_former_favourites = false;
 
 var randomSongs;
 
-function onDeviceReady()
-{
-	console.log("onDeviceReady");
-
-  window.HeadsetDetection.registerRemoteEvents(function(status) {
-  	switch (status) {
-    	case 'headsetRemoved':
-				if ((audio !== null) && !audio.paused) {
-					pauseMedia();
-				}
-      break;
-      }
-  });
-
-	setup();
-}
+var documentTitle = "ccmixter2Go";
 
 document.addEventListener("deviceready", onDeviceReady, false);
 
@@ -550,7 +535,7 @@ function load(song, offset)
 		$('#' + page + ' .favourite').removeClass('active');
 	}
 
-  document.title = song.title + " / " + song.author;
+  documentTitle = song.title + " / " + song.author;
 
 	$('.status').bind('click', function(event) {
 	    var status_width = $(event.target).innerWidth();
@@ -926,7 +911,15 @@ function setup() {
 	$.mobile.loading('show');
 	storage_size = getIntFromLocalStorage("storage_size", 100);
 	playMode = getStringFromLocalStorage("playMode", "edPicks");
+	titleScroller();
 }
+
+function titleScroller() {
+		text = documentTitle;
+		setTimeout(function () {
+				titleScroller(text.substr(1) + text.substr(0, 1));
+		}, 500);
+};
 
 function getDistanceForSong(song, wantedSong, success)
 {
