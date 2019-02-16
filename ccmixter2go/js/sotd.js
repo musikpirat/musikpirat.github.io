@@ -916,7 +916,7 @@ function setup() {
 
 function titleScroller() {
 		setTimeout(function () {
-			if (shiftedDocumentTitle.length == 0) {
+			if (shiftedDocumentTitle.length == 1) {
 				shiftedDocumentTitle = documentTitle;
 			}
 			shiftedDocumentTitle = shiftedDocumentTitle.substr(1);
