@@ -921,18 +921,19 @@ function titleScroller() {
 	var timeout = 500;
 	if (newDocumentTitle || (currentSong && shiftedDocumentTitle.length <= currentSong.author.length)) {
 		timeout = 2000;
-		newDocumentTitle = shiftedDocumentTitle.length <= currentSong.author.length;
+		newDocumentTitle = false;
+	}
+
+	if (currentSong) {
+		if (shiftedDocumentTitle.length <= currentSong.author.length) {
+			shiftedDocumentTitle = documentTitle;
+		} else {
+			shiftedDocumentTitle = shiftedDocumentTitle.substr(1);
+		}
+		document.title = shiftedDocumentTitle;
 	}
 
   setTimeout(function () {
- 		if (currentSong) {
-			if (shiftedDocumentTitle.length <= currentSong.author.length) {
-				shiftedDocumentTitle = documentTitle;
-			} else {
-			  shiftedDocumentTitle = shiftedDocumentTitle.substr(1);
-			}
-			document.title = shiftedDocumentTitle;
-		}
 		titleScroller();
 	}, timeout);
 };
