@@ -919,13 +919,9 @@ function setup() {
 
 function titleScroller() {
 	var timeout = 500;
-	if (newDocumentTitle) {
+	if (newDocumentTitle || (currentSong && shiftedDocumentTitle.length <= currentSong.author.length))) {
 		timeout = 2000;
 		newDocumentTitle = false;
-	}
-
-	if (currentSong && shiftedDocumentTitle.length <= currentSong.author.length) {
-    timeout = 2000;
 	}
 
   setTimeout(function () {
