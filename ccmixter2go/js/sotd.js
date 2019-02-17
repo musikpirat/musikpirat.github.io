@@ -923,7 +923,8 @@ function titleScroller() {
 		timeout = 2000;
 		newDocumentTitle = false;
 	}
-	if (shiftedDocumentTitle.length <= currentSong.author.length) {
+
+	if (currentSong && shiftedDocumentTitle.length <= currentSong.author.length) {
     timeout = 2000;
 	}
 
