@@ -933,9 +933,7 @@ function titleScroller() {
 		document.title = shiftedDocumentTitle;
 	}
 
-  setTimeout(function () {
-		titleScroller();
-	}, timeout);
+  setTimeout(titleScroller, timeout);
 };
 
 function getDistanceForSong(song, wantedSong, success)
