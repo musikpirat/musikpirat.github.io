@@ -49,6 +49,8 @@ var randomSongs;
 
 var documentTitle = "ccmixter2Go";
 
+var newDocumentTitle = true;
+
 var shiftedDocumentTitle = "";
 
 function findSongThatMightBeNotDownloaded(id, type, success, error)
@@ -536,6 +538,7 @@ function load(song, offset)
 	}
 
   documentTitle = song.title + " / " + song.author;
+  newDocumentTitle = true;
 
 	$('.status').bind('click', function(event) {
 	    var status_width = $(event.target).innerWidth();
@@ -915,17 +918,26 @@ function setup() {
 }
 
 function titleScroller() {
-		setTimeout(function () {
-			if (currentSong) {
-				if (shiftedDocumentTitle.length <= currentSong.author.length) {
-					shiftedDocumentTitle = documentTitle;
-				} else {
-				  shiftedDocumentTitle = shiftedDocumentTitle.substr(1);
-				}
-				document.title = shiftedDocumentTitle;
+	var timeout = 500;
+	if (newDocumentTitle) {
+		timeout = 2000;
+		newDocumentTitle = false;
+	}
+	if (shiftedDocumentTitle.length <= currentSong.author.length) {
+    timeout = 2000;
+	}
+
+  setTimeout(function () {
+ 		if (currentSong) {
+			if (shiftedDocumentTitle.length <= currentSong.author.length) {
+				shiftedDocumentTitle = documentTitle;
+			} else {
+			  shiftedDocumentTitle = shiftedDocumentTitle.substr(1);
 			}
-		  titleScroller();
-		}, 500);
+			document.title = shiftedDocumentTitle;
+		}
+		titleScroller();
+	}, timeout);
 };
 
 function getDistanceForSong(song, wantedSong, success)
