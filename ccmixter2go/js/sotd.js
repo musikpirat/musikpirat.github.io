@@ -1554,7 +1554,7 @@ function setupOtherStuff() {
 	$('#options_dialog').on({
 		popupafterclose: function() {
 			var new_storage_size = $("#storage_size").val();
-			if (new_storage_size != storage_size) {
+			if (new_storage_size && new_storage_size != storage_size) {
 				console.log("New storage size is: "+new_storage_size);
 				storage_size = new_storage_size;
 				localStorage.setItem("storage_size", JSON.stringify(new_storage_size));
