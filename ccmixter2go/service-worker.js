@@ -125,15 +125,15 @@ self.addEventListener('fetch', function(e) {
             return response;
           })
           .catch(error => {
-          console.log("Could not load fresh data for "+e.request.url);
-          return cache.match(e.request.url);
-        });
-      })
+            console.log("Could not load fresh data for "+e.request.url);
+            return cache.match(e.request.url);
+          });
+        })
     );
   }
 });
 
-function fetchWithTimeout(url, timeout, resolve, reject) {
+function fetchWithTimeout(url, timeout) {
   console.log("Fetching with "+timeout+"ms timeout "+url);
   return new Promise((resolve, reject) => {
          // Set timeout timer
