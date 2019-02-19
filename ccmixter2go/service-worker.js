@@ -142,6 +142,8 @@ self.addEventListener('fetch', function(e) {
 });
 
 function fetchWithTimeout(url, timeout, resolve, reject) {
+  console.log("Resolve: ",resolve);
+  console.log("Reject: ",reject);
   console.log("Fetching with "+timeout+"ms timeout "+url);
   return new Promise((resolve, reject) => {
          // Set timeout timer
