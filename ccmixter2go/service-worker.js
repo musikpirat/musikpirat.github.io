@@ -126,15 +126,7 @@ self.addEventListener('fetch', function(e) {
       }, error => {
         console.log("Could not load fresh data for "+e.request.url);
         caches.open(webCacheName).then(function(cache) {
-          return cache.match(e.request.url).then(function(response) {
-            if (response) {
-              console.log('[ServiceWorker] Found cached response: ', response);
-              return response;
-            } else {
-              console.log("No cached response found for "+e.request.url);
-              return err;
-            }
-          })
+          return cache.match(e.request.url);
         })
       })
     );
