@@ -118,7 +118,7 @@ self.addEventListener('fetch', function(e) {
     e.respondWith(
       fetchWithTimeout(e.request.url, 5000, response =>
       {
-        console.log("Got fresh data for "+e.request.url);
+        console.log("Got fresh data for "+e.request.url, response);
         caches.open(webCacheName).then(function(cache) {
           cache.put(e.request.url, response.clone());
         });
@@ -129,6 +129,7 @@ self.addEventListener('fetch', function(e) {
           return cache.match(e.request.url).then(function(response) {
             if (response) {
               console.log('[ServiceWorker] Found cached response: ', response);
+              return response;
             } else {
               console.log("No cached response found for "+e.request.url);
               return err;
