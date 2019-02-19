@@ -127,7 +127,7 @@ self.addEventListener('fetch', function(e) {
         console.log("Could not load fresh data for "+e.request.url);
         caches.open(webCacheName).then(function(cache) {
           console.log("Opened "+webCacheName);
-          return cache.match(e.request.url).then(response =>
+          cache.match(e.request.url).then(response =>
           {
             console.log("Found response in cache: ", response);
             return response;
