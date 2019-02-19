@@ -118,6 +118,7 @@ self.addEventListener('fetch', function(e) {
     e.respondWith(
       fetchWithTimeout(e.request.url, 5000, response =>
       {
+        console.log("Got fresh data for "+e.request.url);
         caches.open(webCacheName).then(function(cache) {
         cache.put(e.request.url, response.clone());
         });
