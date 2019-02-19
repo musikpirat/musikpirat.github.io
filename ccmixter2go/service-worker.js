@@ -114,26 +114,24 @@ self.addEventListener('fetch', function(e) {
         })
     );
   } else {
-    console.log("Matching generic request "+e.request.urk+": ", caches.match(e.request.url));
+    console.log("Loading generic request "+e.request.url);
     e.respondWith(
       fetchWithTimeout(e.request.url, 5000, response =>
-        {
-          caches.open(webCacheName).then(function(cache) {
-          cache.put(e.request.url, response.clone());
-          });
-          return response;
-        }, function() {
+      {
+        caches.open(webCacheName).then(function(cache) {
+        cache.put(e.request.url, response.clone());
+        });
+        return response;
+      }, error => {
+        console.log("Could not load fresh data for "+e.request.url);
         caches.open(webCacheName).then(function(cache) {
           return cache.match(e.request.url).then(function(response) {
             if (response) {
               console.log('[ServiceWorker] Found cached response: ', response);
               return response;
             } else {
-              return fetch(e.request).then(response => {
-                console.log("[ServiceWorker] Putting response to cache:", response)
-                cache.put(e.request.url, response.clone());
-                return response;
-              });
+              console.log("No cached response found for "+e.request.url);
+              return err;
             }
           })
         })
