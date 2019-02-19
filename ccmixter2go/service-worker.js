@@ -165,10 +165,10 @@ function fetchWithTimeout(url, timeout, resolve, reject) {
                console.log("Did not get response for "+url);
                reject(err);
              }
-         ).catch(err => {
-           console.log("Request for "+url+" failed.");
-           reject(err);
-         }).finally( () => clearTimeout(timer) );
+         ).finally( () => clearTimeout(timer) );
+     }).catch(err => {
+       console.log("Request for "+url+" failed.");
+       reject(err);
      });
 }
 
