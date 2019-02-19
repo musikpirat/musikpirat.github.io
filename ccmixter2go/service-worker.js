@@ -159,11 +159,11 @@ function fetchWithTimeout(url, timeout, resolve, reject) {
          fetch( url ).then(
              response => {
                console.log("Got response for "+url);
-               resolve( response )
+               resolve(response);
              },
              err => {
                console.log("Did not get response for "+url);
-               reject( err )
+               reject(err);
              }
          ).catch(err => {
            console.log("Request for "+url+" failed.");
