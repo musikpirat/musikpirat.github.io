@@ -160,10 +160,13 @@ function fetchWithTimeout(url, timeout, resolve, reject) {
                resolve( response )
              },
              err => {
-               console.log("Die not get response for "+url);
+               console.log("Did not get response for "+url);
                reject( err )
              }
-         ).finally( () => clearTimeout(timer) );
+         ).catch(err => {
+           console.log("Request for "+url+" failed.");
+           reject(err);
+         }).finally( () => clearTimeout(timer) );
      });
 }
 
