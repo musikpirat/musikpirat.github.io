@@ -146,13 +146,23 @@ function fetchWithTimeout(url, timeout, resolve, reject) {
   return new Promise((resolve, reject) => {
          // Set timeout timer
          let timer = setTimeout(
-             () => reject( new Error('Request timed out') ),
+             () => {
+               console.log("Timeout while waiting for "+url);
+               reject( new Error('Request timed out') )
+             },
              timeout
          );
 
+         console.log("Performing actual fetch for "+url);
          fetch( url ).then(
-             response => resolve( response ),
-             err => reject( err )
+             response => {
+               console.log("Got response for "+url);
+               resolve( response )
+             },
+             err => {
+               console.log("Die not get response for "+url);
+               reject( err )
+             }
          ).finally( () => clearTimeout(timer) );
      });
 }
