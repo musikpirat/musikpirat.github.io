@@ -1542,6 +1542,11 @@ function setupOtherStuff() {
     discardSong(swipeRight);
 	});
 
+	$('#favDiscardButton').bind('click', function(event) {
+		debug("Fav was discarded by user", currentSong);
+    discardSong(swipeRight);
+	});
+
 	$('.wrapper').bind('swiperight', function(event) {
 		swipeRight();
 	});
