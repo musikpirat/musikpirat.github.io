@@ -1,0 +1,12 @@
+{
+  "name": "ccmixter2go-rewrite",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test"
+  },
+  "devDependencies": {
+    "fake-indexeddb": "^6.2.5",
+    "fast-check": "^4.6.0"
+  }
+}
