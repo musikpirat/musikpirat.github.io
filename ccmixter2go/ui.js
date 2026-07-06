@@ -33,6 +33,8 @@ export function renderSongCard(song, container) {
   const authorSpan = document.createElement('span');
   authorSpan.className = 'author';
   authorSpan.textContent = song.author;
+  authorSpan.setAttribute('role', 'button');
+  authorSpan.setAttribute('aria-label', 'Browse songs by ' + song.author);
   credits.appendChild(authorSpan);
 
   container.appendChild(credits);
@@ -95,7 +97,7 @@ export function renderSongCard(song, container) {
  * @param {HTMLElement} [headerEl=document] - Parent element containing the mode buttons.
  */
 export function setPlayMode(mode, headerEl = document) {
-  const buttons = headerEl.querySelectorAll('#edPicks, #favourites, #songs');
+  const buttons = headerEl.querySelectorAll('#edPicks, #favourites, #songs, #playlist');
   buttons.forEach((btn) => btn.classList.remove('active'));
   const active = headerEl.querySelector('#' + mode);
   if (active) {
@@ -108,9 +110,10 @@ export function setPlayMode(mode, headerEl = document) {
  *
  * @param {string} selector - CSS selector for the progress bar element (e.g. '.loading_status').
  * @param {number} percent - 0–100 value.
+ * @param {HTMLElement} [parent=document] - Parent element to scope the query.
  */
-export function updateProgress(selector, percent) {
-  const el = document.querySelector(selector);
+export function updateProgress(selector, percent, parent = document) {
+  const el = parent.querySelector(selector);
   if (el) {
     el.style.width = Math.max(0, Math.min(100, percent)) + '%';
   }
@@ -344,9 +347,7 @@ function slide(outEl, inEl, inStart, outEnd) {
 
     function onDone() {
       outEl.removeEventListener('transitionend', onDone);
-      outEl.style.display = 'none';
-      outEl.style.transition = '';
-      outEl.style.transform = '';
+      outEl.remove();
       inEl.style.transition = '';
       inEl.style.transform = '';
       resolve();

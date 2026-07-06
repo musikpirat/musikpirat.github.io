@@ -1,0 +1,280 @@
+/* ccMixter2go — mobile-first styles matching the original jQuery Mobile layout */
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background: #fff;
+  color: #333;
+  -webkit-tap-highlight-color: transparent;
+}
+
+#app { background: #fff; }
+
+/* --- Header / Play Mode Buttons --- */
+header {
+  height: 25px;
+  background-color: #f9f9f9;
+  border: 0;
+  text-align: center;
+  position: relative;
+}
+
+.header-nav {
+  display: flex;
+  justify-content: space-between;
+  margin-left: 20px;
+  margin-right: 17px;
+}
+
+.box {
+  text-decoration: none;
+  border: 1px solid;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 4px;
+  padding: 2px 5px;
+  color: #000;
+  border-radius: 1em;
+  font-size: 0.85rem;
+  cursor: pointer;
+  background: none;
+}
+
+.box.active { text-shadow: 0 0 0.2em #8F7, 0 0 0.2em #8F7; }
+
+#settings-btn {
+  background: transparent;
+  border: 0;
+  padding-left: 14px;
+  box-shadow: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  position: absolute;
+  right: 8px;
+  top: 2px;
+}
+
+/* --- Song Card / Wrapper --- */
+.wrapper {
+  text-align: center;
+  margin: 5px;
+  padding: 0 !important;
+}
+
+.credits { display: inline; }
+.title, .author { font-size: 1.2em; font-weight: bold; }
+.credit-by { font-size: 1em; }
+.tags { margin-top: 8px; font-size: 0.85em; color: #666; }
+
+/* --- Controls (float-based, matching original) --- */
+.controls {
+  margin-left: auto;
+  margin-right: auto;
+  border-radius: 1em;
+}
+
+.controls div { float: left; }
+
+.play, .pause, .stop, .rewind, .forward, .favourite {
+  width: 128px;
+  height: 128px;
+  cursor: pointer;
+}
+
+.play, .pause, .rewind { margin-right: 10px; }
+.rewind { margin-right: 10px; }
+.forward { margin-left: 10px; }
+
+.player {
+  height: 128px;
+  width: 128px;
+  position: relative;
+}
+
+.play {
+  background: url('images/play.svg') no-repeat, radial-gradient(64px at 50% 50%, #edeae8, #fff);
+}
+.play:active {
+  background: url('images/play.svg') no-repeat, radial-gradient(64px at 50% 50%, #cbf7f1, #fff);
+}
+
+.pause {
+  background: url('images/pause.svg') no-repeat, radial-gradient(64px at 50% 50%, #edeae8, #fff);
+}
+.pause:active {
+  background: url('images/pause.svg') no-repeat, radial-gradient(64px at 50% 50%, #cbf7f1, #fff);
+}
+
+.rewind {
+  background: url('images/rewind.svg') no-repeat, radial-gradient(64px at 50% 50%, #edeae8, #fff);
+}
+.rewind:active {
+  background: url('images/rewind.svg') no-repeat, radial-gradient(64px at 50% 50%, #cbf7f1, #fff);
+}
+
+.forward {
+  background: url('images/forward.svg') no-repeat, radial-gradient(64px at 50% 50%, #edeae8, #fff);
+}
+.forward:active {
+  background: url('images/forward.svg') no-repeat, radial-gradient(64px at 50% 50%, #cbf7f1, #fff);
+}
+
+.favourite {
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 5px;
+  background: url('images/star.svg') no-repeat, radial-gradient(64px at 50% 50%, #edeae8, #fff);
+}
+.favourite:active, .favourite.active {
+  background: url('images/star.svg') no-repeat, radial-gradient(40px at 50% 72px, #F8FF26, #fff);
+}
+
+/* --- Progress Bars --- */
+.status {
+  border: 4px solid;
+  height: 24px;
+  margin-top: 5px;
+  max-width: 90%;
+  clear: left;
+  position: relative;
+  margin-left: auto;
+  margin-right: auto;
+  border-radius: 1em;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.loading_status {
+  background-color: black;
+  background-image: linear-gradient(to bottom right, red, green);
+  height: 100%; width: 0%;
+  position: absolute; top: 0; left: 0;
+}
+
+.play_status {
+  background-image: linear-gradient(to bottom right, red, yellow);
+  height: 100%; width: 0%;
+  position: absolute; top: 0; left: 0;
+  border-radius: 1em;
+}
+
+/* --- License Badge (CSS sprite) --- */
+.license_div {
+  width: 88px; height: 31px;
+  margin-left: auto; margin-right: auto;
+  margin-top: 5px;
+}
+.license {
+  width: 88px; height: 31px;
+  background: url('images/cc-sprite.png');
+  display: block;
+  margin: auto auto 5px auto;
+}
+.by { background-position: 0 0; }
+.by-sa { background-position: 0 -31px; }
+.by-nc { background-position: 0 -62px; }
+.sampling_plus { background-position: 0 -93px; }
+.nc-sampling_plus { background-position: 0 -124px; }
+
+/* --- ccMixter link --- */
+.ccmixter_ref_div { margin-top: 5px; }
+.ccmixter_ref { text-decoration: none; color: #333; }
+.ccmixter_ref img { vertical-align: middle; }
+
+/* --- Responsive: narrow screens --- */
+@media only screen and (max-width: 450px) {
+  .rewind {
+    position: relative;
+    top: 128px;
+  }
+  .player {
+    margin-left: -64px;
+  }
+  .forward {
+    left: 138px;
+    position: absolute;
+    top: 128px;
+  }
+  .controls {
+    height: 256px;
+    width: 266px;
+    position: relative;
+  }
+  .wrapper { min-height: 730px; }
+}
+
+@media only screen and (min-width: 451px) {
+  .controls {
+    height: 128px;
+    width: 408px;
+  }
+  .player { margin: auto; }
+  .wrapper { min-height: 600px; }
+}
+
+/* --- Dialog --- */
+.dialog-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 1000;
+}
+.dialog {
+  background: #fff; border-radius: 8px;
+  max-width: 90%; width: 360px;
+  padding: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+}
+.dialog-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.dialog-header h2 { font-size: 1.1em; margin: 0; }
+.dialog-close { background: none; border: none; font-size: 1.4em; cursor: pointer; }
+.dialog-body { font-size: 0.95em; line-height: 1.5; }
+
+/* --- Onboarding Carousel --- */
+.onboarding-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 1100;
+}
+.onboarding-carousel {
+  background: #fff; border-radius: 12px;
+  max-width: 90%; width: 400px;
+  padding: 24px; text-align: center;
+}
+.onboarding-content h2 { margin-bottom: 12px; }
+.onboarding-content p { font-size: 0.9em; line-height: 1.6; margin-bottom: 16px; }
+.onboarding-nav { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; }
+.onboarding-nav button {
+  background: #0066cc; color: #fff; border: none;
+  padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 0.9em;
+}
+.onboarding-nav button:disabled { opacity: 0.4; cursor: default; }
+.onboarding-indicator { font-size: 0.85em; color: #666; }
+.onboarding-close {
+  margin-top: 16px; background: none; border: 1px solid #ccc;
+  padding: 6px 20px; border-radius: 6px; cursor: pointer; font-size: 0.85em;
+}
+
+/* --- Settings Panel --- */
+.settings-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 1000;
+}
+.settings-panel {
+  background: #fff; border-radius: 8px;
+  max-width: 90%; width: 320px;
+  padding: 16px;
+}
+.settings-panel h2 { font-size: 1.1em; margin-bottom: 12px; }
+.settings-panel ul { list-style: none; }
+.settings-panel li {
+  padding: 10px 0; border-bottom: 1px solid #eee; cursor: pointer;
+}
+.settings-panel li:last-child { border-bottom: none; }
+.settings-close {
+  margin-top: 12px; background: none; border: 1px solid #ccc;
+  padding: 6px 16px; border-radius: 6px; cursor: pointer; width: 100%;
+}

@@ -43,6 +43,12 @@ describe('proxyUrl', () => {
     assert.equal(proxyUrl(input), expected);
   });
 
+  it('replaces https://ccmixter.org/content/ with proxy URL', () => {
+    const input = 'https://ccmixter.org/content/artist/song.mp3';
+    const expected = 'https://ccmixter.christian-hufgard.de/content/artist/song.mp3';
+    assert.equal(proxyUrl(input), expected);
+  });
+
   it('leaves non-ccmixter URLs unchanged', () => {
     const input = 'https://example.com/audio/track.mp3';
     assert.equal(proxyUrl(input), input);
