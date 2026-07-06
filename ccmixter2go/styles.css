@@ -64,7 +64,6 @@ header {
 
 .credits { display: inline; }
 .title, .author { font-size: 1.2em; font-weight: bold; }
-.author { cursor: pointer; text-decoration: underline; }
 .credit-by { font-size: 1em; }
 .tags { margin-top: 8px; font-size: 0.85em; color: #666; }
 
@@ -182,22 +181,6 @@ header {
 .ccmixter_ref_div { margin-top: 5px; }
 .ccmixter_ref { text-decoration: none; color: #333; }
 .ccmixter_ref img { vertical-align: middle; }
-
-/* --- Download All Button --- */
-.download-all-btn {
-  display: block;
-  margin: 10px auto;
-  padding: 8px 16px;
-  border: 1px solid #333;
-  border-radius: 1em;
-  background: none;
-  cursor: pointer;
-  font-size: 0.9rem;
-}
-.download-all-btn:disabled {
-  opacity: 0.6;
-  cursor: default;
-}
 
 /* --- Responsive: narrow screens --- */
 @media only screen and (max-width: 450px) {

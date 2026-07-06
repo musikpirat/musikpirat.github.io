@@ -67,22 +67,6 @@ export async function fetchPlaylist(playlistId) {
 }
 
 /**
- * Fetch full song data for all songs in a playlist.
- * @param {number} playlistId
- * @returns {Promise<object[]>} Array of raw API song objects.
- */
-export async function fetchPlaylistSongs(playlistId) {
-  const ids = await fetchPlaylist(playlistId);
-  const songs = [];
-  for (const id of ids) {
-    const raw = await fetchSongById(id);
-    const item = Array.isArray(raw) ? raw[0] : raw;
-    if (item) songs.push(item);
-  }
-  return songs;
-}
-
-/**
  * Fetch the playlists for a given user.
  * @param {string} username
  * @returns {Promise<object[]>}

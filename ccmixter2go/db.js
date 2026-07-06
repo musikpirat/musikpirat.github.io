@@ -1,15 +1,15 @@
 /**
  * IndexedDB database module — all local storage operations for ccMixter2go.
  *
- * Database: 'ccmixter2go', version 5
- * Stores: songs, edPicks, favourites, playlist — keyed on `id`, with `filename` index on `file_name`.
+ * Database: 'ccmixter2go', version 4
+ * Stores: songs, edPicks, favourites — keyed on `id`, with `filename` index on `file_name`.
  *
  * @module db
  */
 
 const DB_NAME = 'ccmixter2go';
-const DB_VERSION = 5;
-const STORE_NAMES = ['songs', 'edPicks', 'favourites', 'playlist'];
+const DB_VERSION = 4;
+const STORE_NAMES = ['songs', 'edPicks', 'favourites'];
 
 /** @type {IDBDatabase|null} */
 let dbInstance = null;
@@ -305,36 +305,6 @@ export function getSongAtIndex(storeName, index) {
         return;
       }
       resolve(cursor.value);
-    };
-    cursorReq.onerror = () => reject(cursorReq.error);
-  });
-}
-
-/**
- * Get all non-skipped songs by a given author from the songs store.
- *
- * @param {string} author
- * @returns {Promise<object[]>}
- */
-export function getSongsByAuthor(author) {
-  const db = getDB();
-  return new Promise((resolve, reject) => {
-    const tx = db.transaction('songs', 'readonly');
-    const store = tx.objectStore('songs');
-    const results = [];
-    const cursorReq = store.openCursor();
-
-    cursorReq.onsuccess = (event) => {
-      const cursor = event.target.result;
-      if (!cursor) {
-        resolve(results);
-        return;
-      }
-      const song = cursor.value;
-      if (song.author === author && !song.isSkipped) {
-        results.push(song);
-      }
-      cursor.continue();
     };
     cursorReq.onerror = () => reject(cursorReq.error);
   });

@@ -3,7 +3,6 @@
  */
 
 const ORIGINAL_PREFIX = 'http://ccmixter.org/content/';
-const ORIGINAL_PREFIX_HTTPS = 'https://ccmixter.org/content/';
 const PROXY_PREFIX = 'https://ccmixter.christian-hufgard.de/content/';
 
 /**
@@ -12,12 +11,8 @@ const PROXY_PREFIX = 'https://ccmixter.christian-hufgard.de/content/';
  * @returns {string}
  */
 export function proxyUrl(url) {
-  if (typeof url !== 'string') return url;
-  if (url.startsWith(ORIGINAL_PREFIX)) {
+  if (typeof url === 'string' && url.startsWith(ORIGINAL_PREFIX)) {
     return PROXY_PREFIX + url.slice(ORIGINAL_PREFIX.length);
-  }
-  if (url.startsWith(ORIGINAL_PREFIX_HTTPS)) {
-    return PROXY_PREFIX + url.slice(ORIGINAL_PREFIX_HTTPS.length);
   }
   return url;
 }

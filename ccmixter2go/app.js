@@ -5,10 +5,10 @@
  * loaded by index.html via <script type="module">.
  */
 
-import { openDB, insertSong, getSongById, deleteSong, getHighestId, getLowestUnplayedId, getNextSong, getPrevSong, getCount, getSongAtIndex, isSongInStore, getSongsByAuthor } from './db.js';
-import { fetchSongs, fetchSongById, fetchPlaylist, fetchPlaylistSongs, fetchUserPlaylists, addToPlaylist, removeFromPlaylist, createPlaylist as apiCreatePlaylist, login } from './api.js';
+import { openDB, insertSong, getSongById, deleteSong, getHighestId, getLowestUnplayedId, getNextSong, getPrevSong, getCount, getSongAtIndex, isSongInStore } from './db.js';
+import { fetchSongs, fetchSongById, fetchPlaylist, fetchUserPlaylists, addToPlaylist, removeFromPlaylist, createPlaylist as apiCreatePlaylist, login } from './api.js';
 import { parseSongFromAPI } from './song-parser.js';
-import { createPlayer, proxyUrl } from './player.js';
+import { createPlayer } from './player.js';
 import { renderSongCard, setPlayMode, updateProgress, showDialog, showOnboarding, slideLeft, slideRight } from './ui.js';
 import { attachSwipeHandler } from './swipe.js';
 import { startTitleScroller, stopTitleScroller } from './title-scroller.js';
@@ -18,12 +18,9 @@ import { createShuffleSequence, nextFromSequence } from './shuffle.js';
 let db = null;
 let player = null;
 let currentSong = null;
-let playMode = 'edPicks'; // 'edPicks' | 'favourites' | 'songs' | 'playlist'
+let playMode = 'edPicks'; // 'edPicks' | 'favourites' | 'songs'
 let shuffleSequence = [];
 let playlistId = -1;
-let browsePlaylistId = 57954; // default playlist to browse
-let artistFilter = null; // when set, browsing is restricted to this author
-let loadedSongId = null; // tracks which song is loaded in the player
 let user = null;
 let password = null;
 
@@ -37,16 +34,13 @@ const settingsBtn = document.getElementById('settings-btn');
 function storeForMode(mode) {
   if (mode === 'edPicks') return 'edPicks';
   if (mode === 'favourites') return 'favourites';
-  if (mode === 'playlist') return 'playlist';
   return 'songs';
 }
 
 /** Song filter for navigation based on play mode. */
 function songFilter(song) {
-  if (artistFilter && (song.author !== artistFilter || song.isSkipped)) return false;
   if (playMode === 'edPicks') return song.isEdPick && !song.isSkipped;
   if (playMode === 'favourites') return true;
-  if (playMode === 'playlist') return !song.isSkipped;
   return !song.isSkipped && !song.isPlayed;
 }
 
@@ -73,15 +67,6 @@ async function loadSong(song) {
   const favEl = songContainer.querySelector('.favourite');
   if (favEl) {
     favEl.addEventListener('click', () => toggleFavourite());
-  }
-
-  // Show download-all button in playlist mode
-  if (playMode === 'playlist') {
-    const dlBtn = document.createElement('button');
-    dlBtn.className = 'download-all-btn';
-    dlBtn.textContent = 'Download All';
-    dlBtn.setAttribute('aria-label', 'Download all playlist songs for offline playback');
-    songContainer.appendChild(dlBtn);
   }
 }
 
@@ -113,7 +98,6 @@ function wirePlayModeSelection() {
 
   edPicksBtn.addEventListener('click', async (e) => {
     e.preventDefault();
-    artistFilter = null;
     playMode = 'edPicks';
     localStorage.setItem('playMode', JSON.stringify(playMode));
     setPlayMode(playMode);
@@ -132,7 +116,6 @@ function wirePlayModeSelection() {
 
   favouritesBtn.addEventListener('click', async (e) => {
     e.preventDefault();
-    artistFilter = null;
     playMode = 'favourites';
     localStorage.setItem('playMode', JSON.stringify(playMode));
     setPlayMode(playMode);
@@ -148,7 +131,6 @@ function wirePlayModeSelection() {
 
   songsBtn.addEventListener('click', async (e) => {
     e.preventDefault();
-    artistFilter = null;
     playMode = 'songs';
     localStorage.setItem('playMode', JSON.stringify(playMode));
     setPlayMode(playMode);
@@ -162,70 +144,16 @@ function wirePlayModeSelection() {
       else showDialog('No songs', 'All songs have been played or skipped.');
     }
   });
-
-  const playlistBtn = document.getElementById('playlist');
-  if (playlistBtn) {
-    playlistBtn.addEventListener('click', async (e) => {
-      e.preventDefault();
-      artistFilter = null;
-      playMode = 'playlist';
-      localStorage.setItem('playMode', JSON.stringify(playMode));
-      setPlayMode(playMode);
-      if (player) player.pause();
-
-      // Load playlist songs into the playlist store if empty
-      const count = await getCount('playlist');
-      if (count === 0) {
-        try {
-          const raw = await fetchPlaylistSongs(browsePlaylistId);
-          for (const item of raw) {
-            const song = parseSongFromAPI(item);
-            if (song) {
-              await insertSong(song, 'playlist');
-              await insertSong(song, 'songs');
-              if (song.isEdPick) await insertSong(song, 'edPicks');
-            }
-          }
-        } catch (err) {
-          showDialog('Error', 'Could not load playlist: ' + err.message);
-          return;
-        }
-      }
-
-      const song = await getHighestId('playlist');
-      if (song && songFilter(song)) {
-        await loadSong(song);
-      } else if (song) {
-        const prev = await getPrevSong(song.id, 'playlist', songFilter);
-        if (prev) await loadSong(prev);
-        else showDialog('No songs', 'Playlist is empty.');
-      } else {
-        showDialog('No songs', 'Playlist is empty.');
-      }
-    });
-  }
 }
 
 // =====================================================================
 // 14.3 — Swipe Navigation
 // =====================================================================
 
-/** Mark a played, non-favourite song as skipped when swiped away. */
-async function autoSkipIfPlayed(song) {
-  if (song && song.isPlayed && !song.isFavourite) {
-    song.isSkipped = true;
-    await persistSong(song);
-  }
-}
-
 function wireSwipeNavigation() {
   attachSwipeHandler(songContainer, {
     async onSwipeLeft() {
       if (!currentSong) return;
-      if (player) player.pause();
-      updatePlayPauseButton(false);
-      loadedSongId = null;
-      await autoSkipIfPlayed(currentSong);
       const store = storeForMode(playMode);
       let next = await getNextSong(currentSong.id, store, songFilter);
       if (!next) {
@@ -244,10 +172,6 @@ function wireSwipeNavigation() {
 
     async onSwipeRight() {
       if (!currentSong) return;
-      if (player) player.pause();
-      updatePlayPauseButton(false);
-      loadedSongId = null;
-      await autoSkipIfPlayed(currentSong);
       const store = storeForMode(playMode);
       let prev = await getPrevSong(currentSong.id, store, songFilter);
       if (!prev) {
@@ -310,8 +234,7 @@ function wirePlaybackControls() {
 
   player.onTimeUpdate((currentTime, duration) => {
     if (duration > 0) {
-      const el = songContainer.querySelector('.play_status');
-      if (el) el.style.width = ((currentTime / duration) * 100) + '%';
+      updateProgress('.play_status', (currentTime / duration) * 100);
     }
   });
 
@@ -332,77 +255,15 @@ function wirePlaybackControls() {
   songContainer.addEventListener('click', async (e) => {
     const target = e.target;
 
-    // Download all playlist songs for offline
-    if (target.closest('.download-all-btn')) {
-      const btn = target.closest('.download-all-btn');
-      btn.disabled = true;
-      btn.textContent = 'Downloading...';
-      try {
-        const store = 'playlist';
-        const allSongs = [];
-        let cursor = await getHighestId(store);
-        if (cursor) {
-          allSongs.push(cursor);
-          let prev = await getPrevSong(cursor.id, store, () => true);
-          while (prev) {
-            allSongs.push(prev);
-            prev = await getPrevSong(prev.id, store, () => true);
-          }
-        }
-        const cache = await caches.open('ccmixter2go');
-        let downloaded = 0;
-        for (const song of allSongs) {
-          const url = proxyUrl(song.downloadLink);
-          const cached = await cache.match(url);
-          if (!cached) {
-            try {
-              const response = await fetch(url);
-              await cache.put(url, response);
-            } catch { /* skip failed downloads */ }
-          }
-          downloaded++;
-          btn.textContent = `Downloading... ${downloaded}/${allSongs.length}`;
-        }
-        btn.textContent = 'Downloaded ✓';
-      } catch (err) {
-        btn.textContent = 'Download failed';
-      }
-      return;
-    }
-
-    // Artist name click — browse all songs by this author
-    if (target.closest('.author')) {
-      const author = target.closest('.author').textContent;
-      artistFilter = author;
-      playMode = 'songs';
-      localStorage.setItem('playMode', JSON.stringify(playMode));
-      setPlayMode(playMode);
-      if (player) player.pause();
-      const store = storeForMode(playMode);
-      const song = await getHighestId(store);
-      if (song && songFilter(song)) {
-        await loadSong(song);
-      } else if (song) {
-        const prev = await getPrevSong(song.id, store, songFilter);
-        if (prev) await loadSong(prev);
-        else showDialog('No songs', 'No songs by ' + author + ' available.');
-      }
-      return;
-    }
-
     // Play/pause button
     if (target.closest('#play-pause-btn')) {
       if (!currentSong) return;
-      if (loadedSongId !== currentSong.id) {
-        player.loadSong(currentSong.downloadLink);
-        loadedSongId = currentSong.id;
-        updateProgress('.play_status', 0, songContainer);
-        updateProgress('.loading_status', 0, songContainer);
-        player.play();
-        updatePlayPauseButton(true);
-      } else {
-        player.toggle();
-        updatePlayPauseButton(player.isPlaying());
+      player.toggle();
+      const playing = player.isPlaying();
+      updatePlayPauseButton(playing);
+      if (playing) {
+        currentSong.isPlaying = true;
+        await persistSong(currentSong);
       }
       return;
     }
@@ -512,7 +373,6 @@ async function playNextFromShuffle() {
     if (song) {
       await loadSong(song);
       player.loadSong(song.downloadLink);
-      loadedSongId = song.id;
       player.play();
       updatePlayPauseButton(true);
     }
@@ -527,7 +387,6 @@ async function playNextFromShuffle() {
   if (song) {
     await loadSong(song);
     player.loadSong(song.downloadLink);
-    loadedSongId = song.id;
     player.play();
     updatePlayPauseButton(true);
   }
@@ -551,7 +410,6 @@ async function autoAdvance() {
   if (next) {
     await loadSong(next);
     player.loadSong(next.downloadLink);
-    loadedSongId = next.id;
     player.play();
     updatePlayPauseButton(true);
   }
@@ -712,7 +570,7 @@ async function init() {
     navigator.serviceWorker.register('./sw.js');
     navigator.serviceWorker.addEventListener('message', (event) => {
       if (event.data && event.data.msg === 'progress') {
-        updateProgress('.loading_status', event.data.percent, songContainer);
+        updateProgress('.loading_status', event.data.percent);
       }
     });
   }
@@ -723,7 +581,7 @@ async function init() {
   // Restore play mode
   try {
     const stored = JSON.parse(localStorage.getItem('playMode'));
-    if (stored && ['edPicks', 'favourites', 'songs', 'playlist'].includes(stored)) {
+    if (stored && ['edPicks', 'favourites', 'songs'].includes(stored)) {
       playMode = stored;
     }
   } catch { /* use default */ }
