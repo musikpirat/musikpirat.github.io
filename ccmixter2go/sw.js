@@ -58,6 +58,11 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
+  // Cross-origin requests — let the browser handle them directly
+  if (url.origin !== self.location.origin) {
+    return;
+  }
+
   // MP3 files — cache-first
   if (url.pathname.endsWith('.mp3')) {
     event.respondWith(
