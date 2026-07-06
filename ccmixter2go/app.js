@@ -290,7 +290,7 @@ function wireSwipeNavigation() {
         // Remove cached MP3
         if ('caches' in window) {
           const cache = await caches.open('ccmixter2go');
-          await cache.delete(currentSong.downloadLink);
+          await cache.delete(proxyUrl(currentSong.downloadLink));
         }
         // Navigate to previous song
         const store = storeForMode(playMode);
@@ -477,7 +477,7 @@ async function toggleFavourite() {
     // Remove cached MP3
     if ('caches' in window) {
       const cache = await caches.open('ccmixter2go');
-      await cache.delete(currentSong.downloadLink);
+      await cache.delete(proxyUrl(currentSong.downloadLink));
     }
   }
 
